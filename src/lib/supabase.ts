@@ -1,6 +1,19 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://gmaugonuxprrvhpmmphe.supabase.co";
-const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "sb_publishable_yItqY0eG0Q0NeTKN7-b1Qg__FIuNJbB";
+const clean = (v?: string) => (v ?? "").trim().replace(/^["']|["']$/g, "");
 
-export const supabase = createClient(url, key);
+const rawUrl = clean(process.env.NEXT_PUBLIC_SUPABASE_URL);
+const rawKey = clean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+
+const hasValidUrl = /^https?:\/\//i.test(rawUrl);
+
+if (!hasValidUrl || !rawKey) {
+  console.warn(
+    "[supabase] Faltan NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY. Usando valores placeholder."
+  );
+}
+
+export const supabase: SupabaseClient = createClient(
+  hasValidUrl ? rawUrl : "https://placeholder.supabase.co",
+  rawKey || "placeholder-anon-key"
+);
