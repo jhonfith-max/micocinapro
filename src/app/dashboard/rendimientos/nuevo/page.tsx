@@ -35,9 +35,11 @@ export default function NuevaPruebaPage() {
     const { error: insertError } = await supabase.from("yield_tests").insert({
       user_id: user.id,
       ingredient_id: ingredientId,
-      peso_compra: parseFloat(pesoCompra),
-      peso_limpio: parseFloat(pesoLimpio),
+      tipo: "limpieza",
+      peso_inicial: parseFloat(pesoCompra),
+      peso_final: parseFloat(pesoLimpio),
       porcentaje_rendimiento: rendimiento,
+      porcentaje_merma: 100 - rendimiento,
     });
     if (insertError) { setError(insertError.message); setLoading(false); return; }
     router.push("/dashboard/rendimientos");
