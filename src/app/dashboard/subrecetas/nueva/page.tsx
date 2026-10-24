@@ -6,27 +6,20 @@ import { supabase } from "@/lib/supabase";
 import { formatCOP } from "@/lib/utils";
 
 type Ingredient = { id: string; nombre: string; precio_por_unidad: number; unidad_compra: string };
-type Row = { ingredient_id: string; nombre: string; cantidad: number; unidad: string; costo: number };
+type Item = { ingredient_id: string; nombre: string; cantidad: number; unidad: string; costo: number };
 
-function costoIngrediente(ing: Ingredient, cantidad: number, unidad: string) {
-  const base = ing.unidad_compra.toLowerCase();
-  let precio = ing.precio_por_unidad;
-  if (unidad === "g" && base === "kg") precio = ing.precio_por_unidad / 1000;
-  if (unidad === "ml" && (base === "litro" || base === "l")) precio = ing.precio_por_unidad / 1000;
-  return Math.round(cantidad * precio);
-}
-
-export default function NuevaSubPage() {
+export default function NuevaSubrecetaPage() {
   const router = useRouter();
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
   const [nombre, setNombre] = useState("");
   const [porciones, setPorciones] = useState("1");
-  const [rows, setRows] = useState<Row[]>([]);
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-  const [selected, setSelected] = useState("");
+  const [procedimiento, setProcedimiento] = useState("");
+  const [busqueda, setBusqueda] = useState("");
+  const [seleccionado, setSeleccionado] = useState<Ingredient | null>(null);
   const [cantidad, setCantidad] = useState("");
-  const [unidad, setUnidad] = useState("g");
+  const [editando, setEditando] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -38,67 +31,123 @@ export default function NuevaSubPage() {
     load();
   }, []);
 
-  const agregar = () => {
-    const ing = ingredients.find((i) => i.id === selected);
-    const qty = parseFloat(cantidad);
-    if (!ing || !qty) return;
-    setRows((prev) => [...prev, { ingredient_id: ing.id, nombre: ing.nombre, cantidad: qty, unidad, costo: costoIngrediente(ing, qty, unidad) }]);
-    setSelected("");
-    setCantidad("");
+  const filtrados = ingredients.filter((i) => i.nombre.toLowerCase().includes(busqueda.toLowerCase()));
+
+  const unidadYPrecio = (ing: Ingredient) => {
+    const u = ing.unidad_compra.toLowerCase();
+    if (u === "kg") return { unidad: "g", precio: ing.precio_por_unidad / 1000 };
+    if (u === "litro" || u === "l") return { unidad: "ml", precio: ing.precio_por_unidad / 1000 };
+    return { unidad: u, precio: ing.precio_por_unidad };
   };
 
-  const guardar = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const agregar = () => {
+    if (!seleccionado || !cantidad) return;
+    const { unidad, precio } = unidadYPrecio(seleccionado);
+    const costo = precio * parseFloat(cantidad);
+    const nuevo: Item = { ingredient_id: seleccionado.id, nombre: seleccionado.nombre, cantidad: parseFloat(cantidad), unidad, costo };
+    if (editando !== null) {
+      const copia = [...items];
+      copia[editando] = nuevo;
+      setItems(copia);
+      setEditando(null);
+    } else {
+      setItems([...items, nuevo]);
+    }
+    setSeleccionado(null);
+    setCantidad("");
+    setBusqueda("");
+  };
+
+  const editar = (i: number) => {
+    const item = items[i];
+    const ing = ingredients.find((x) => x.id === item.ingredient_id);
+    if (ing) {
+      setSeleccionado(ing);
+      setCantidad(String(item.cantidad));
+      setEditando(i);
+    }
+  };
+
+  const eliminar = (i: number) => setItems(items.filter((_, idx) => idx !== i));
+
+  const costoTotal = items.reduce((s, i) => s + i.costo, 0);
+  const costoPorcion = costoTotal / parseFloat(porciones || "1");
+
+  const guardar = async () => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    const costoTotal = rows.reduce((s, r) => s + r.costo, 0);
-    const n = parseFloat(porciones) || 1;
-    const { data, error: insertError } = await supabase.from("recipes").insert({
+    const { data: rec } = await supabase.from("recipes").insert({
       user_id: user.id,
-      nombre: nombre.trim(),
-      porciones: n,
-      costo_total: Math.round(costoTotal),
-      costo_porcion: Math.round(costoTotal / n),
-      es_preparacion: true,
+      nombre,
+      porciones: parseFloat(porciones),
+      costo_total: costoTotal,
+      instrucciones: procedimiento,
+      tipo: "subreceta",
     }).select().single();
-    if (insertError || !data) { setError(insertError?.message || "No se guardó"); setLoading(false); return; }
-    if (rows.length) await supabase.from("recipe_ingredients").insert(rows.map((r) => ({ recipe_id: data.id, ingredient_id: r.ingredient_id, cantidad: r.cantidad, unidad: r.unidad, tipo_uso: "crudo", costo: r.costo })));
+    if (rec) {
+      for (const item of items) {
+        await supabase.from("recipe_ingredients").insert({
+          recipe_id: rec.id,
+          ingredient_id: item.ingredient_id,
+          cantidad: item.cantidad,
+          costo: item.costo,
+        });
+      }
+    }
     router.push("/dashboard/subrecetas");
   };
 
   return (
-    <div className="max-w-xl">
+    <div className="max-w-2xl">
       <h1 className="text-2xl sm:text-3xl font-semibold mb-6">Nueva sub-receta</h1>
-      <form onSubmit={guardar} className="space-y-4">
-        <div className="bg-white border border-stone-200 rounded-2xl p-5 sm:p-6 space-y-4">
-          <div>
-            <label className="block text-sm text-stone-600 mb-1">¿Cómo se llama?</label>
-            <input required value={nombre} onChange={(e) => setNombre(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
-          </div>
-          <div>
-            <label className="block text-sm text-stone-600 mb-1">¿Para cuántos platos alcanza?</label>
-            <input required type="number" min="1" value={porciones} onChange={(e) => setPorciones(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
-          </div>
+      <div className="bg-white border border-stone-200 rounded-2xl p-5 sm:p-6 space-y-4">
+        <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="¿Cómo se llama?" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+        <input type="number" value={porciones} onChange={(e) => setPorciones(e.target.value)} placeholder="¿Para cuántos platos alcanza?" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+        <div>
+          <input value={busqueda} onChange={(e) => setBusqueda(e.target.value)} placeholder="Buscar ingrediente" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+          {busqueda && (
+            <div className="mt-2 border border-stone-200 rounded-xl overflow-hidden">
+              {filtrados.map((ing) => (
+                <button key={ing.id} onClick={() => { setSeleccionado(ing); setBusqueda(""); }} className="w-full text-left px-4 py-2.5 hover:bg-stone-50 text-sm">
+                  {ing.nombre}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
-        <div className="bg-white border border-stone-200 rounded-2xl p-5 sm:p-6 space-y-3">
-          <p className="font-medium">Qué lleva</p>
-          {rows.map((row, i) => (
-            <div key={i} className="flex justify-between text-sm"><span>{row.nombre}: {row.cantidad} {row.unidad}</span><span>{formatCOP(row.costo)}</span></div>
-          ))}
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
-            <select value={selected} onChange={(e) => setSelected(e.target.value)} className="px-3 py-3 border border-stone-200 rounded-xl">
-              <option value="">Agregar</option>
-              {ingredients.map((ing) => <option key={ing.id} value={ing.id}>{ing.nombre}</option>)}
-            </select>
-            <input type="number" value={cantidad} onChange={(e) => setCantidad(e.target.value)} placeholder="Cantidad" className="px-3 py-3 border border-stone-200 rounded-xl" />
-            <select value={unidad} onChange={(e) => setUnidad(e.target.value)} className="px-3 py-3 border border-stone-200 rounded-xl"><option value="g">g</option><option value="ml">ml</option><option value="unidad">unidad</option></select>
-            <button type="button" onClick={agregar} className="px-3 py-3 border border-stone-200 rounded-xl">Agregar</button>
+        {seleccionado && (
+          <div className="bg-stone-50 rounded-xl p-4 space-y-3">
+            <p className="font-medium">{seleccionado.nombre}</p>
+            <div className="flex gap-2">
+              <input type="number" value={cantidad} onChange={(e) => setCantidad(e.target.value)} placeholder="Cantidad" className="flex-1 px-4 py-2.5 border border-stone-200 rounded-xl text-sm" />
+              <span className="px-4 py-2.5 bg-stone-100 rounded-xl text-sm">{unidadYPrecio(seleccionado).unidad}</span>
+            </div>
+            <button onClick={agregar} className="px-4 py-2 bg-green-800 text-white rounded-lg text-sm">{editando !== null ? "Actualizar" : "Agregar"}</button>
           </div>
+        )}
+        {items.length > 0 && (
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Qué lleva</p>
+            {items.map((item, i) => (
+              <div key={i} className="flex items-center justify-between text-sm py-2 border-b border-stone-100">
+                <span>{item.nombre}: {item.cantidad} {item.unidad}</span>
+                <div className="flex items-center gap-3">
+                  <span>{formatCOP(item.costo)}</span>
+                  <button onClick={() => editar(i)} className="text-stone-400 hover:text-stone-600">Editar</button>
+                  <button onClick={() => eliminar(i)} className="text-red-400 hover:text-red-600">×</button>
+                </div>
+              </div>
+            ))}
+            <p className="text-sm font-medium pt-2">Costo por porción: {formatCOP(costoPorcion)}</p>
+          </div>
+        )}
+        <div>
+          <label className="block text-sm text-stone-600 mb-1">Procedimiento</label>
+          <textarea value={procedimiento} onChange={(e) => setProcedimiento(e.target.value)} rows={4} placeholder="Cómo se prepara..." className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
         </div>
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <button disabled={loading} className="w-full sm:w-auto px-6 py-3.5 bg-green-800 text-white rounded-xl">{loading ? "Guardando..." : "Guardar"}</button>
-      </form>
+        <button onClick={guardar} disabled={loading} className="px-6 py-3 bg-green-800 text-white rounded-xl">{loading ? "Guardando..." : "Guardar"}</button>
+      </div>
     </div>
   );
 }
