@@ -40,17 +40,17 @@ export default function NuevaPruebaPage() {
     if (!user || !ingredientId) return;
 
     const { data: existing } = await supabase
-      .from("yield_tests")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("ingredient_id", ingredientId)
-      .maybeSingle();
+  .from("yield_tests")
+  .select("id")
+  .eq("user_id", user.id)
+  .eq("ingredient_id", ingredientId)
+  .limit(1);
 
-    if (existing) {
-      setError("Este producto ya tiene una prueba. Edítala en la lista.");
-      setLoading(false);
-      return;
-    }
+if (existing && existing.length > 0) {
+  setError("Este producto ya tiene una prueba. Edítala en la lista.");
+  setLoading(false);
+  return;
+}
 
     const { error: insertError } = await supabase.from("yield_tests").insert({
       user_id: user.id,
