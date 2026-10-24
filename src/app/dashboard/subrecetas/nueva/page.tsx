@@ -61,11 +61,7 @@ export default function NuevaSubrecetaPage() {
   const editar = (i: number) => {
     const item = items[i];
     const ing = ingredients.find((x) => x.id === item.ingredient_id);
-    if (ing) {
-      setSeleccionado(ing);
-      setCantidad(String(item.cantidad));
-      setEditando(i);
-    }
+    if (ing) { setSeleccionado(ing); setCantidad(String(item.cantidad)); setEditando(i); }
   };
 
   const eliminar = (i: number) => setItems(items.filter((_, idx) => idx !== i));
@@ -99,13 +95,20 @@ export default function NuevaSubrecetaPage() {
   };
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-2xl mx-auto">
       <h1 className="text-2xl sm:text-3xl font-semibold mb-6">Nueva sub-receta</h1>
-      <div className="bg-white border border-stone-200 rounded-2xl p-5 sm:p-6 space-y-4">
-        <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="¿Cómo se llama?" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
-        <input type="number" value={porciones} onChange={(e) => setPorciones(e.target.value)} placeholder="¿Para cuántos platos alcanza?" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+      <div className="bg-white border border-stone-200 rounded-2xl p-6 space-y-5">
         <div>
-          <input value={busqueda} onChange={(e) => setBusqueda(e.target.value)} placeholder="Buscar ingrediente" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+          <label className="block text-sm text-stone-600 mb-1.5">¿Cómo se llama?</label>
+          <input value={nombre} onChange={(e) => setNombre(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+        </div>
+        <div>
+          <label className="block text-sm text-stone-600 mb-1.5">¿Para cuántos platos alcanza?</label>
+          <input type="number" value={porciones} onChange={(e) => setPorciones(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+        </div>
+        <div>
+          <label className="block text-sm text-stone-600 mb-1.5">Agregar ingrediente</label>
+          <input value={busqueda} onChange={(e) => setBusqueda(e.target.value)} placeholder="Buscar..." className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
           {busqueda && (
             <div className="mt-2 border border-stone-200 rounded-xl overflow-hidden">
               {filtrados.map((ing) => (
@@ -128,13 +131,13 @@ export default function NuevaSubrecetaPage() {
         )}
         {items.length > 0 && (
           <div className="space-y-2">
-            <p className="text-sm font-medium">Qué lleva</p>
+            <p className="text-sm font-medium text-stone-600">Qué lleva</p>
             {items.map((item, i) => (
-              <div key={i} className="flex items-center justify-between text-sm py-2 border-b border-stone-100">
+              <div key={i} className="flex items-center justify-between text-sm py-2.5 border-b border-stone-100">
                 <span>{item.nombre}: {item.cantidad} {item.unidad}</span>
                 <div className="flex items-center gap-3">
-                  <span>{formatCOP(item.costo)}</span>
-                  <button onClick={() => editar(i)} className="text-stone-400 hover:text-stone-600">Editar</button>
+                  <span className="text-stone-500">{formatCOP(item.costo)}</span>
+                  <button onClick={() => editar(i)} className="text-stone-400 hover:text-stone-600 text-xs">Editar</button>
                   <button onClick={() => eliminar(i)} className="text-red-400 hover:text-red-600">×</button>
                 </div>
               </div>
@@ -143,7 +146,7 @@ export default function NuevaSubrecetaPage() {
           </div>
         )}
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Procedimiento</label>
+          <label className="block text-sm text-stone-600 mb-1.5">Procedimiento</label>
           <textarea value={procedimiento} onChange={(e) => setProcedimiento(e.target.value)} rows={4} placeholder="Cómo se prepara..." className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
         </div>
         <button onClick={guardar} disabled={loading} className="px-6 py-3 bg-green-800 text-white rounded-xl">{loading ? "Guardando..." : "Guardar"}</button>
