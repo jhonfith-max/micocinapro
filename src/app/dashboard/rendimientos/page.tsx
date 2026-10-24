@@ -1,55 +1,72 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
-type Test = { id: string; nombre: string; peso_compra: number; peso_limpio: number; porcentaje_rendimiento: number };
+type YieldTest = {
+  id: string;
+  ingredient_id: string;
+  peso_inicial: number;
+  peso_final: number;
+  porcentaje_rendimiento: number;
+  notas: string | null;
+  ingredients: { nombre: string } | null;
+};
 
 export default function RendimientosPage() {
-  const [items, setItems] = useState<Test[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const [tests, setTests] = useState<YieldTest[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const { data: tests, error: testError } = await supabase.from("yield_tests").select("*").eq("user_id", user.id);
-      if (testError) { setError(testError.message); return; }
-      const { data: ings } = await supabase.from("ingredients").select("id, nombre").eq("user_id", user.id);
-      const nombres: Record<string, string> = {};
-      (ings || []).forEach((ing) => { nombres[ing.id] = ing.nombre; });
-      setItems((tests || []).map((t) => ({
-        id: t.id,
-        nombre: nombres[t.ingredient_id] || "Producto",
-        peso_compra: t.peso_compra || t.peso_inicial || 0,
-        peso_limpio: t.peso_limpio || t.peso_util || 0,
-        porcentaje_rendimiento: t.porcentaje_rendimiento || 0,
-      })));
+      const { data } = await supabase
+        .from("yield_tests")
+        .select("id, ingredient_id, peso_inicial, peso_final, porcentaje_rendimiento, notas, ingredients(nombre)")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+      setTests(data || []);
+      setLoading(false);
     };
     load();
   }, []);
 
   return (
-    <div className="max-w-2xl">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-8">
+    <div>
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <p className="text-xs uppercase tracking-widest text-green-800">Paso 2</p>
-          <h1 className="text-2xl sm:text-3xl font-semibold mt-1">Lo que se usa</h1>
-          <p className="text-stone-500 mt-1 text-sm">Pesa lo que llega y lo que queda.</p>
+          <p className="text-xs uppercase tracking-widest text-stone-400">Paso 2</p>
+          <h1 className="text-2xl sm:text-3xl font-semibold">Lo que se usa</h1>
+          <p className="text-stone-500 text-sm mt-1">Pesa lo que llega y lo que queda.</p>
         </div>
-        <a href="/dashboard/rendimientos/nueva" className="px-4 py-2.5 bg-green-800 text-white text-sm rounded-xl text-center">+ Nueva prueba</a>
+        <button onClick={() => router.push("/dashboard/rendimientos/nueva")} className="px-4 py-2.5 bg-green-800 text-white rounded-xl text-sm">
+          + Nueva prueba
+        </button>
       </div>
-      {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
-      {items.length === 0 && !error && <p className="text-stone-400">Todavía no hay pruebas.</p>}
+      {loading && <p className="text-stone-400">Cargando...</p>}
+      {!loading && tests.length === 0 && (
+        <div className="bg-white border border-stone-200 rounded-2xl p-8 text-center">
+          <p className="text-stone-500">Aún no hay pruebas.</p>
+        </div>
+      )}
       <div className="space-y-3">
-        {items.map((item) => (
-          <a key={item.id} href={"/dashboard/rendimientos/" + item.id} className="block bg-white border border-stone-200 rounded-2xl p-5">
-            <div className="flex items-baseline justify-between">
-              <p className="text-lg font-medium capitalize">{item.nombre}</p>
-              <p className="text-2xl font-semibold">{item.porcentaje_rendimiento}%</p>
+        {tests.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => router.push(`/dashboard/rendimientos/${t.id}`)}
+            className="w-full bg-white border border-stone-200 rounded-2xl p-5 text-left hover:border-stone-300"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium">{t.ingredients?.nombre || "Producto"}{t.notas ? ` · ${t.notas}` : ""}</p>
+                <p className="text-sm text-stone-500 mt-1">De {t.peso_inicial} g quedan {t.peso_final} g en el plato.</p>
+              </div>
+              <p className="text-2xl font-semibold">{t.porcentaje_rendimiento}%</p>
             </div>
-            <p className="text-sm text-stone-500 mt-1">De {item.peso_compra} g quedan {item.peso_limpio} g en el plato.</p>
-          </a>
+          </button>
         ))}
       </div>
     </div>

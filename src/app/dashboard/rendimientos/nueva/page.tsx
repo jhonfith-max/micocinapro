@@ -10,6 +10,7 @@ export default function NuevaPruebaPage() {
   const router = useRouter();
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [ingredientId, setIngredientId] = useState("");
+  const [nombrePrueba, setNombrePrueba] = useState("");
   const [pesoCompra, setPesoCompra] = useState("");
   const [pesoLimpio, setPesoLimpio] = useState("");
   const [cocina, setCocina] = useState(false);
@@ -39,19 +40,6 @@ export default function NuevaPruebaPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user || !ingredientId) return;
 
-    const { data: existing } = await supabase
-  .from("yield_tests")
-  .select("id")
-  .eq("user_id", user.id)
-  .eq("ingredient_id", ingredientId)
-  .limit(1);
-
-if (existing && existing.length > 0) {
-  setError("Este producto ya tiene una prueba. Edítala en la lista.");
-  setLoading(false);
-  return;
-}
-
     const { error: insertError } = await supabase.from("yield_tests").insert({
       user_id: user.id,
       ingredient_id: ingredientId,
@@ -62,6 +50,7 @@ if (existing && existing.length > 0) {
       porcentaje_merma: 100 - rendimiento,
       merma_aprovechable: mermaUtil ? parseFloat(gramosMerma || "0") : 0,
       uso_merma: mermaUtil ? nombreMerma : null,
+      notas: nombrePrueba,
     });
 
     if (insertError) { setError(insertError.message); setLoading(false); return; }
@@ -78,6 +67,10 @@ if (existing && existing.length > 0) {
             <option value="">Elegir</option>
             {ingredients.map((ing) => <option key={ing.id} value={ing.id}>{ing.nombre}</option>)}
           </select>
+        </div>
+        <div>
+          <label className="block text-sm text-stone-600 mb-1">Nombre de esta prueba</label>
+          <input required value={nombrePrueba} onChange={(e) => setNombrePrueba(e.target.value)} placeholder="Cruda, cocida, para carpaccio..." className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
         </div>
         <div>
           <label className="block text-sm text-stone-600 mb-1">¿Cuántos gramos compraste?</label>
