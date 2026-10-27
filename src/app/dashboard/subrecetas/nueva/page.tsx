@@ -92,6 +92,7 @@ export default function NuevaSubrecetaPage() {
           ingredient_id: item.ingredient_id,
           cantidad: item.cantidad,
           costo: item.costo,
+          unidad: item.unidad,
         });
         if (ingError) { setError(ingError.message); setLoading(false); return; }
       }
