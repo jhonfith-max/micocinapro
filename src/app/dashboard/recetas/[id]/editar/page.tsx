@@ -27,7 +27,7 @@ export default function EditarRecetaPage() {
     const load = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const id = window.location.pathname.split("/")[4];
+      const id = window.location.pathname.split("/")[3];
       const { data: rec } = await supabase.from("recipes").select("*").eq("id", id).single();
       if (rec) {
         setNombre(rec.nombre || "");
@@ -72,7 +72,7 @@ export default function EditarRecetaPage() {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    const id = window.location.pathname.split("/")[4];
+    const id = window.location.pathname.split("/")[3];
     let fotoUrl = fotoActual;
     if (foto) {
       const nombreArchivo = `${user.id}/${Date.now()}.jpg`;
