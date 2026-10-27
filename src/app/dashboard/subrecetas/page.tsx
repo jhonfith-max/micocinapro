@@ -41,7 +41,7 @@ export default function SubrecetasPage() {
             </div>
             <div className="flex items-center justify-between sm:justify-end gap-4">
               <p className="font-semibold">{formatCOP(item.costo_porcion)}</p>
-              <a href={"/dashboard/subrecetas/" + item.id + "/editar"} className="text-sm text-green-800">Corregir</a>
+              <a href={"/dashboard/subrecetas/" + item.id} className="text-sm text-green-800">Corregir</a>
               <button onClick={() => eliminar(item.id)} className="text-sm text-stone-400">Quitar</button>
             </div>
           </div>
