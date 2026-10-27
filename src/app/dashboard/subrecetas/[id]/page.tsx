@@ -36,13 +36,13 @@ export default function EditarSubrecetaPage() {
       setIngredients(ings || []);
       const { data: recIngs } = await supabase.from("recipe_ingredients").select("ingredient_id, cantidad, costo, ingredients(nombre)").eq("recipe_id", id);
       if (recIngs) {
-        setItems(recIngs.map((ri) => ({
-          ingredient_id: ri.ingredient_id,
-          nombre: ings?.find((i) => i.id === ri.ingredient_id)?.nombre || "",
-          cantidad: ri.cantidad,
-          unidad: "g",
-          costo: ri.costo,
-        })));
+        setItems(recIngs.map((ri: any) => ({
+            ingredient_id: ri.ingredient_id,
+            nombre: ri.ingredients?.nombre || "",
+            cantidad: ri.cantidad,
+            unidad: "g",
+            costo: ri.costo,
+          })));
       }
     };
     load();
