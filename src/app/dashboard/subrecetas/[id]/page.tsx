@@ -26,6 +26,9 @@ export default function EditarSubrecetaPage() {
       const id = window.location.pathname.split("/").pop();
       const { data: rec } = await supabase.from("recipes").select("*").eq("id", id).single();
       if (rec) {
+        const { data: { user } } = await supabase.auth.getUser();
+const { data: ings } = await supabase.from("ingredients").select("id, nombre, precio_por_unidad, unidad_compra").eq("user_id", user.id).order("nombre");
+setIngredients(ings || []);
         setNombre(rec.nombre || "");
         setPorciones(String(rec.porciones || 1));
         setProcedimiento(rec.instrucciones || "");
