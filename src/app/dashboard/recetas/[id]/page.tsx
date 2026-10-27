@@ -1,48 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { formatCOP } from "@/lib/utils";
 
-type Ingredient = { id: string; nombre: string; precio_por_unidad: number; unidad_compra: string };
-type Item = { ingredient_id: string; nombre: string; cantidad: number; unidad: string; costo: number };
+type Recipe = { id: string; nombre: string; porciones: number; precio_venta: number; costo_total: number; instrucciones: string; foto: string | null; alergenos: string[] };
+type Item = { nombre: string; cantidad: number; unidad: string; costo: number };
 
-export default function EditarRecetaPage() {
-  const router = useRouter();
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+export default function FichaPage() {
+  const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [items, setItems] = useState<Item[]>([]);
-  const [nombre, setNombre] = useState("");
-  const [porciones, setPorciones] = useState("1");
-  const [precioVenta, setPrecioVenta] = useState("");
-  const [instrucciones, setInstrucciones] = useState("");
-  const [foto, setFoto] = useState<File | null>(null);
-  const [fotoActual, setFotoActual] = useState("");
-  const [busqueda, setBusqueda] = useState("");
-  const [seleccionado, setSeleccionado] = useState<Ingredient | null>(null);
-  const [cantidad, setCantidad] = useState("");
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const load = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const id = window.location.pathname.split("/").pop();
+      const id = window.location.pathname.split("/")[3];
       const { data: rec } = await supabase.from("recipes").select("*").eq("id", id).single();
-      if (rec) {
-        setNombre(rec.nombre || "");
-        setPorciones(String(rec.porciones || 1));
-        setPrecioVenta(String(rec.precio_venta || ""));
-        setInstrucciones(rec.instrucciones || "");
-        setFotoActual(rec.foto || "");
-      }
-      const { data: ings } = await supabase.from("ingredients").select("id, nombre, precio_por_unidad, unidad_compra").eq("user_id", user.id).order("nombre");
-      setIngredients(ings || []);
-      const { data: recIngs } = await supabase.from("recipe_ingredients").select("ingredient_id, cantidad, costo, unidad").eq("recipe_id", id);
+      setRecipe(rec);
+      const { data: recIngs } = await supabase.from("recipe_ingredients").select("cantidad, costo, unidad, ingredients(nombre)").eq("recipe_id", id);
       if (recIngs) {
-        setItems(recIngs.map((ri) => ({
-          ingredient_id: ri.ingredient_id,
-          nombre: ings?.find((i) => i.id === ri.ingredient_id)?.nombre || "",
+        setItems(recIngs.map((ri: any) => ({
+          nombre: ri.ingredients?.nombre || "",
           cantidad: ri.cantidad,
           unidad: ri.unidad || "g",
           costo: ri.costo,
@@ -52,105 +29,54 @@ export default function EditarRecetaPage() {
     load();
   }, []);
 
-  const filtrados = ingredients.filter((i) => i.nombre.toLowerCase().includes(busqueda.toLowerCase()));
+  if (!recipe) return <div className="p-6">Cargando...</div>;
 
-  const agregar = () => {
-    if (!seleccionado || !cantidad) return;
-    const costo = seleccionado.precio_por_unidad * parseFloat(cantidad);
-    setItems([...items, { ingredient_id: seleccionado.id, nombre: seleccionado.nombre, cantidad: parseFloat(cantidad), unidad: "g", costo }]);
-    setSeleccionado(null);
-    setCantidad("");
-    setBusqueda("");
-  };
-
-  const eliminar = (i: number) => setItems(items.filter((_, idx) => idx !== i));
-
-  const costoTotal = items.reduce((s, i) => s + i.costo, 0);
-  const costoPorcion = costoTotal / parseFloat(porciones || "1");
-
-  const guardar = async () => {
-    setLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const id = window.location.pathname.split("/").pop();
-    let fotoUrl = fotoActual;
-    if (foto) {
-      const nombreArchivo = `${user.id}/${Date.now()}.jpg`;
-      await supabase.storage.from("recetas").upload(nombreArchivo, foto);
-      const { data } = supabase.storage.from("recetas").getPublicUrl(nombreArchivo);
-      fotoUrl = data.publicUrl;
-    }
-    await supabase.from("recipes").update({
-      nombre,
-      porciones: parseFloat(porciones),
-      precio_venta: parseFloat(precioVenta || "0"),
-      costo_total: costoTotal,
-      instrucciones,
-      foto: fotoUrl,
-    }).eq("id", id);
-    await supabase.from("recipe_ingredients").delete().eq("recipe_id", id);
-    for (const item of items) {
-      await supabase.from("recipe_ingredients").insert({
-        recipe_id: id,
-        ingredient_id: item.ingredient_id,
-        cantidad: item.cantidad,
-        costo: item.costo,
-        unidad: item.unidad,
-      });
-    }
-    router.push("/dashboard/recetas");
-  };
+  const costoPorcion = recipe.costo_total / (recipe.porciones || 1);
+  const precioSinImp = recipe.precio_venta / 1.08;
+  const foodCost = Math.round((costoPorcion / precioSinImp) * 100);
+  const impoconsumo = recipe.precio_venta - precioSinImp;
+  const margen = precioSinImp - costoPorcion;
 
   return (
-    <div className="max-w-2xl">
-      <h1 className="text-2xl sm:text-3xl font-semibold mb-6">Corregir receta</h1>
-      <div className="bg-white border border-stone-200 rounded-2xl p-5 sm:p-6 space-y-4">
-        <input value={nombre} onChange={(e) => setNombre(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
-        <input type="number" value={porciones} onChange={(e) => setPorciones(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+    <div className="max-w-2xl mx-auto p-6 print:p-0">
+      <div className="flex justify-between items-start mb-6">
         <div>
-          <label className="block text-sm text-stone-600 mb-1.5">Foto del plato</label>
-          {fotoActual && <img src={fotoActual} alt="" className="w-32 h-32 object-cover rounded-xl mb-2" />}
-          <input type="file" accept="image/*" onChange={(e) => setFoto(e.target.files?.[0] || null)} className="w-full text-sm" />
+          <h1 className="text-2xl font-semibold">{recipe.nombre}</h1>
+          <p className="text-sm text-stone-500">{recipe.porciones} porción{recipe.porciones !== 1 ? "es" : ""}</p>
         </div>
+        <button onClick={() => window.print()} className="px-4 py-2 border border-stone-200 rounded-xl text-sm print:hidden">Imprimir</button>
+      </div>
+      {recipe.foto && <img src={recipe.foto} alt="" className="w-full h-48 object-cover rounded-2xl mb-6" />}
+      <div className="space-y-4">
         <div>
-          <input value={busqueda} onChange={(e) => setBusqueda(e.target.value)} placeholder="Buscar ingrediente" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
-          {busqueda && (
-            <div className="mt-2 border border-stone-200 rounded-xl overflow-hidden">
-              {filtrados.map((ing) => (
-                <button key={ing.id} onClick={() => { setSeleccionado(ing); setBusqueda(""); }} className="w-full text-left px-4 py-2.5 hover:bg-stone-50 text-sm">
-                  {ing.nombre}
-                </button>
-              ))}
+          <p className="text-xs uppercase tracking-widest text-stone-400 mb-2">Ingredientes</p>
+          {items.map((item, i) => (
+            <div key={i} className="flex justify-between text-sm py-1.5 border-b border-stone-100">
+              <span>{item.nombre}</span>
+              <span>{item.cantidad} {item.unidad} · {formatCOP(item.costo)}</span>
             </div>
-          )}
+          ))}
         </div>
-        {seleccionado && (
-          <div className="bg-stone-50 rounded-xl p-4 space-y-3">
-            <p className="font-medium">{seleccionado.nombre}</p>
-            <input type="number" value={cantidad} onChange={(e) => setCantidad(e.target.value)} placeholder="Gramos" className="w-full px-4 py-2.5 border border-stone-200 rounded-xl text-sm" />
-            <button onClick={agregar} className="px-4 py-2 bg-green-800 text-white rounded-lg text-sm">Agregar</button>
+        <div className="bg-stone-50 rounded-2xl p-4 space-y-2 text-sm">
+          <div className="flex justify-between"><span>Costo por porción</span><span>{formatCOP(costoPorcion)}</span></div>
+          <div className="flex justify-between"><span>Precio de venta (sin imp.)</span><span>{formatCOP(precioSinImp)}</span></div>
+          <div className="flex justify-between"><span>Impoconsumo 8%</span><span>{formatCOP(impoconsumo)}</span></div>
+          <div className="flex justify-between font-medium"><span>Precio final</span><span>{formatCOP(recipe.precio_venta)}</span></div>
+          <div className="flex justify-between"><span>Food cost</span><span className={foodCost > 30 ? "text-red-600" : "text-green-700"}>{foodCost}%</span></div>
+          <div className="flex justify-between"><span>Margen de contribución</span><span>{formatCOP(margen)}</span></div>
+        </div>
+        {recipe.alergenos?.length > 0 && (
+          <div>
+            <p className="text-xs uppercase tracking-widest text-stone-400 mb-2">Alérgenos</p>
+            <p className="text-sm">{recipe.alergenos.join(", ")}</p>
           </div>
         )}
-        {items.length > 0 && (
-          <div className="space-y-2">
-            {items.map((item, i) => (
-              <div key={i} className="flex items-center justify-between text-sm py-2 border-b border-stone-100">
-                <span>{item.nombre} · {item.cantidad} {item.unidad}</span>
-                <div className="flex items-center gap-3">
-                  <span>{formatCOP(item.costo)}</span>
-                  <button onClick={() => eliminar(i)} className="text-red-400">×</button>
-                </div>
-              </div>
-            ))}
-            <p className="text-sm font-medium">Costo por porción: {formatCOP(costoPorcion)}</p>
+        {recipe.instrucciones && (
+          <div>
+            <p className="text-xs uppercase tracking-widest text-stone-400 mb-2">Montaje</p>
+            <p className="text-sm whitespace-pre-wrap">{recipe.instrucciones}</p>
           </div>
         )}
-        <input type="number" value={precioVenta} onChange={(e) => setPrecioVenta(e.target.value)} placeholder="Precio de venta" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
-        <div>
-          <label className="block text-sm text-stone-600 mb-1">Instrucciones</label>
-          <textarea value={instrucciones} onChange={(e) => setInstrucciones(e.target.value)} rows={3} className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
-        </div>
-        <button onClick={guardar} disabled={loading} className="px-6 py-3 bg-green-800 text-white rounded-xl">{loading ? "Guardando..." : "Guardar"}</button>
       </div>
     </div>
   );
