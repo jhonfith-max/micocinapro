@@ -34,15 +34,18 @@ export default function EditarSubrecetaPage() {
       }
       const { data: ings } = await supabase.from("ingredients").select("id, nombre, precio_por_unidad, unidad_compra").eq("user_id", user.id).order("nombre");
       setIngredients(ings || []);
-      const { data: recIngs } = await supabase.from("recipe_ingredients").select("ingredient_id, cantidad, costo, ingredients(nombre)").eq("recipe_id", id);
-      if (recIngs) {
-        setItems(recIngs.map((ri: any) => ({
+      const { data: recIngs } = await supabase.from("recipe_ingredients").select("ingredient_id, cantidad, costo").eq("recipe_id", id);
+      if (recIngs && recIngs.length > 0) {
+        setItems(recIngs.map((ri) => {
+          const ing = ings?.find((i) => i.id === ri.ingredient_id);
+          return {
             ingredient_id: ri.ingredient_id,
-            nombre: ri.ingredients?.nombre || "",
+            nombre: ing?.nombre || "",
             cantidad: ri.cantidad,
             unidad: "g",
             costo: ri.costo,
-          })));
+          };
+        }));
       }
     };
     load();
@@ -93,6 +96,7 @@ export default function EditarSubrecetaPage() {
       nombre,
       porciones: parseFloat(porciones),
       costo_total: costoTotal,
+      costo_porcion: costoPorcion,
       instrucciones: procedimiento,
     }).eq("id", id);
     await supabase.from("recipe_ingredients").delete().eq("recipe_id", id);
