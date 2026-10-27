@@ -23,8 +23,6 @@ export default function EditarSubrecetaPage() {
 
   useEffect(() => {
     const load = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
       const id = window.location.pathname.split("/").pop();
       const { data: rec } = await supabase.from("recipes").select("*").eq("id", id).single();
       if (rec) {
@@ -32,20 +30,16 @@ export default function EditarSubrecetaPage() {
         setPorciones(String(rec.porciones || 1));
         setProcedimiento(rec.instrucciones || "");
       }
-      const { data: ings } = await supabase.from("ingredients").select("id, nombre, precio_por_unidad, unidad_compra").eq("user_id", user.id).order("nombre");
-      setIngredients(ings || []);
       const { data: recIngs } = await supabase.from("recipe_ingredients").select("ingredient_id, cantidad, costo, unidad").eq("recipe_id", id);
-      if (recIngs && recIngs.length > 0) {
-        setItems(recIngs.map((ri) => {
-          const ing = ings?.find((i) => i.id === ri.ingredient_id);
-          return {
-            ingredient_id: ri.ingredient_id,
-            nombre: ing?.nombre || "",
-            cantidad: ri.cantidad,
-            unidad: ri.unidad || "g",
-            costo: ri.costo,
-          };
-        }));
+      if (recIngs) {
+        const { data: ings } = await supabase.from("ingredients").select("id, nombre");
+        setItems(recIngs.map((ri) => ({
+          ingredient_id: ri.ingredient_id,
+          nombre: ings?.find((i) => i.id === ri.ingredient_id)?.nombre || "Ingrediente",
+          cantidad: ri.cantidad,
+          unidad: ri.unidad || "g",
+          costo: ri.costo,
+        })));
       }
     };
     load();
