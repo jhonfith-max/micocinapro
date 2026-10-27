@@ -20,6 +20,7 @@ export default function NuevaRecetaPage() {
   const [porciones, setPorciones] = useState("1");
   const [precioVenta, setPrecioVenta] = useState("");
   const [instrucciones, setInstrucciones] = useState("");
+  const [foto, setFoto] = useState<File | null>(null);
   const [busqueda, setBusqueda] = useState("");
   const [seleccionado, setSeleccionado] = useState<Ingredient | Sub | null>(null);
   const [esSub, setEsSub] = useState(false);
@@ -82,6 +83,13 @@ export default function NuevaRecetaPage() {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
+    let fotoUrl = null;
+    if (foto) {
+      const nombreArchivo = `${user.id}/${Date.now()}.jpg`;
+      await supabase.storage.from("recetas").upload(nombreArchivo, foto);
+      const { data } = supabase.storage.from("recetas").getPublicUrl(nombreArchivo);
+      fotoUrl = data.publicUrl;
+    }
     const { data: rec } = await supabase.from("recipes").insert({
       user_id: user.id,
       nombre,
@@ -89,6 +97,7 @@ export default function NuevaRecetaPage() {
       precio_venta: parseFloat(precioVenta || "0"),
       costo_total: costoTotal,
       instrucciones,
+      foto: fotoUrl,
     }).select().single();
     if (rec) {
       for (const item of items) {
@@ -112,6 +121,10 @@ export default function NuevaRecetaPage() {
       <div className="bg-white border border-stone-200 rounded-2xl p-5 sm:p-6 space-y-4">
         <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre del plato" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
         <input type="number" value={porciones} onChange={(e) => setPorciones(e.target.value)} placeholder="Porciones" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+        <div>
+          <label className="block text-sm text-stone-600 mb-1.5">Foto del plato</label>
+          <input type="file" accept="image/*" onChange={(e) => setFoto(e.target.files?.[0] || null)} className="w-full text-sm" />
+        </div>
         <div>
           <input value={busqueda} onChange={(e) => setBusqueda(e.target.value)} placeholder="Buscar ingrediente o acompañamiento" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
           {busqueda && (
