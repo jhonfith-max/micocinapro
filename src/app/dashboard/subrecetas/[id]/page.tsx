@@ -34,7 +34,7 @@ export default function EditarSubrecetaPage() {
       }
       const { data: ings } = await supabase.from("ingredients").select("id, nombre, precio_por_unidad, unidad_compra").eq("user_id", user.id).order("nombre");
       setIngredients(ings || []);
-      const { data: recIngs } = await supabase.from("recipe_ingredients").select("ingredient_id, cantidad, costo").eq("recipe_id", id);
+      const { data: recIngs } = await supabase.from("recipe_ingredients").select("ingredient_id, cantidad, costo, ingredients(nombre)").eq("recipe_id", id);
       if (recIngs) {
         setItems(recIngs.map((ri) => ({
           ingredient_id: ri.ingredient_id,
