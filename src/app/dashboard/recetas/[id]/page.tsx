@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatCOP } from "@/lib/utils";
 
-type Recipe = { id: string; nombre: string; porciones: number; precio_venta: number; costo_total: number; instrucciones: string; foto: string | null; alergenos: string[] };
+type Recipe = { id: string; nombre: string; porciones: number; precio_venta: number; costo_total: number; instrucciones: string; foto: string | null };
 type Item = { nombre: string; cantidad: number; unidad: string; costo: number };
 
 export default function FichaPage() {
@@ -16,10 +16,11 @@ export default function FichaPage() {
       const id = window.location.pathname.split("/")[3];
       const { data: rec } = await supabase.from("recipes").select("*").eq("id", id).single();
       setRecipe(rec);
-      const { data: recIngs } = await supabase.from("recipe_ingredients").select("cantidad, costo, unidad, ingredients(nombre)").eq("recipe_id", id);
+      const { data: recIngs } = await supabase.from("recipe_ingredients").select("ingredient_id, cantidad, costo, unidad").eq("recipe_id", id);
       if (recIngs) {
-        setItems(recIngs.map((ri: any) => ({
-          nombre: ri.ingredients?.nombre || "",
+        const { data: ings } = await supabase.from("ingredients").select("id, nombre");
+        setItems(recIngs.map((ri) => ({
+          nombre: ings?.find((i) => i.id === ri.ingredient_id)?.nombre || "",
           cantidad: ri.cantidad,
           unidad: ri.unidad || "g",
           costo: ri.costo,
@@ -65,12 +66,6 @@ export default function FichaPage() {
           <div className="flex justify-between"><span>Food cost</span><span className={foodCost > 30 ? "text-red-600" : "text-green-700"}>{foodCost}%</span></div>
           <div className="flex justify-between"><span>Margen de contribución</span><span>{formatCOP(margen)}</span></div>
         </div>
-        {recipe.alergenos?.length > 0 && (
-          <div>
-            <p className="text-xs uppercase tracking-widest text-stone-400 mb-2">Alérgenos</p>
-            <p className="text-sm">{recipe.alergenos.join(", ")}</p>
-          </div>
-        )}
         {recipe.instrucciones && (
           <div>
             <p className="text-xs uppercase tracking-widest text-stone-400 mb-2">Montaje</p>
