@@ -72,6 +72,8 @@ export default function NuevaRecetaPage() {
     setEsSub(false);
   };
 
+  const eliminar = (i: number) => setItems(items.filter((_, idx) => idx !== i));
+
   const costoTotal = items.reduce((s, i) => s + i.costo, 0);
   const costoPorcion = costoTotal / parseFloat(porciones || "1");
   const foodCost = precioVenta ? Math.round((costoPorcion / parseFloat(precioVenta)) * 100) : 0;
@@ -129,9 +131,9 @@ export default function NuevaRecetaPage() {
               <div>
                 <label className="block text-sm text-stone-600 mb-1">¿Cómo lo vas a usar?</label>
                 <select value={uso} onChange={(e) => setUso(e.target.value)} className="w-full px-4 py-2.5 border border-stone-200 rounded-xl text-sm">
-                  <option value="compra">Como lo compré</option>
-                  {yields.some((y) => y.ingredient_id === (seleccionado as Ingredient).id && y.tipo === "limpieza") && <option value="limpio">Ya limpio</option>}
-                  {yields.some((y) => y.ingredient_id === (seleccionado as Ingredient).id && y.tipo === "coccion") && <option value="cocido">Ya cocido</option>}
+                  <option value="compra">Sin prueba de rendimiento</option>
+                  {yields.some((y) => y.ingredient_id === (seleccionado as Ingredient).id && y.tipo === "limpieza") && <option value="limpio">Con rendimiento (limpio)</option>}
+                  {yields.some((y) => y.ingredient_id === (seleccionado as Ingredient).id && y.tipo === "coccion") && <option value="cocido">Con rendimiento (cocido)</option>}
                 </select>
               </div>
             )}
@@ -142,9 +144,12 @@ export default function NuevaRecetaPage() {
         {items.length > 0 && (
           <div className="space-y-2">
             {items.map((item, i) => (
-              <div key={i} className="flex justify-between text-sm py-2 border-b border-stone-100">
+              <div key={i} className="flex items-center justify-between text-sm py-2 border-b border-stone-100">
                 <span>{item.nombre} · {item.cantidad} {item.unidad}</span>
-                <span>{formatCOP(item.costo)}</span>
+                <div className="flex items-center gap-3">
+                  <span>{formatCOP(item.costo)}</span>
+                  <button onClick={() => eliminar(i)} className="text-red-400">×</button>
+                </div>
               </div>
             ))}
             <p className="text-sm font-medium">Costo por porción: {formatCOP(costoPorcion)}</p>
