@@ -20,6 +20,7 @@ export default function NuevaSubrecetaPage() {
   const [cantidad, setCantidad] = useState("");
   const [editando, setEditando] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -71,24 +72,28 @@ export default function NuevaSubrecetaPage() {
 
   const guardar = async () => {
     setLoading(true);
+    setError(null);
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const { data: rec } = await supabase.from("recipes").insert({
+    if (!user) { setError("No hay sesión"); setLoading(false); return; }
+    const { data: rec, error: recError } = await supabase.from("recipes").insert({
       user_id: user.id,
       nombre,
       porciones: parseFloat(porciones),
       costo_total: costoTotal,
+      costo_porcion: costoPorcion,
       instrucciones: procedimiento,
-      tipo: "subreceta",
+      es_preparacion: true,
     }).select().single();
+    if (recError) { setError(recError.message); setLoading(false); return; }
     if (rec) {
       for (const item of items) {
-        await supabase.from("recipe_ingredients").insert({
+        const { error: ingError } = await supabase.from("recipe_ingredients").insert({
           recipe_id: rec.id,
           ingredient_id: item.ingredient_id,
           cantidad: item.cantidad,
           costo: item.costo,
         });
+        if (ingError) { setError(ingError.message); setLoading(false); return; }
       }
     }
     router.push("/dashboard/subrecetas");
@@ -149,6 +154,7 @@ export default function NuevaSubrecetaPage() {
           <label className="block text-sm text-stone-600 mb-1.5">Procedimiento</label>
           <textarea value={procedimiento} onChange={(e) => setProcedimiento(e.target.value)} rows={4} placeholder="Cómo se prepara..." className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
         </div>
+        {error && <p className="text-sm text-red-600">{error}</p>}
         <button onClick={guardar} disabled={loading} className="px-6 py-3 bg-green-800 text-white rounded-xl">{loading ? "Guardando..." : "Guardar"}</button>
       </div>
     </div>
