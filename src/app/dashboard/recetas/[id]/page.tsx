@@ -33,10 +33,10 @@ export default function FichaPage() {
   if (!recipe) return <div className="p-6">Cargando...</div>;
 
   const costoPorcion = recipe.costo_total / (recipe.porciones || 1);
-  const precioSinImp = recipe.precio_venta / 1.08;
-  const foodCost = Math.round((costoPorcion / precioSinImp) * 100);
-  const impoconsumo = recipe.precio_venta - precioSinImp;
-  const margen = precioSinImp - costoPorcion;
+  const foodCost = Math.round((costoPorcion / recipe.precio_venta) * 100);
+  const impoconsumo = Math.round(recipe.precio_venta * 0.08);
+  const precioFinal = recipe.precio_venta + impoconsumo;
+  const margen = recipe.precio_venta - costoPorcion;
 
   return (
     <div className="max-w-2xl mx-auto p-6 print:p-0">
@@ -59,12 +59,12 @@ export default function FichaPage() {
           ))}
         </div>
         <div className="bg-stone-50 rounded-2xl p-4 space-y-2 text-sm">
-          <div className="flex justify-between"><span>Costo por porción</span><span>{formatCOP(costoPorcion)}</span></div>
-          <div className="flex justify-between"><span>Precio de venta (sin imp.)</span><span>{formatCOP(precioSinImp)}</span></div>
+          <div className="flex justify-between"><span>Costo de producción</span><span>{formatCOP(Math.round(costoPorcion))}</span></div>
+          <div className="flex justify-between"><span>Precio de venta</span><span>{formatCOP(recipe.precio_venta)}</span></div>
           <div className="flex justify-between"><span>Impoconsumo 8%</span><span>{formatCOP(impoconsumo)}</span></div>
-          <div className="flex justify-between font-medium"><span>Precio final</span><span>{formatCOP(recipe.precio_venta)}</span></div>
+          <div className="flex justify-between font-medium"><span>Precio final</span><span>{formatCOP(precioFinal)}</span></div>
           <div className="flex justify-between"><span>Food cost</span><span className={foodCost > 30 ? "text-red-600" : "text-green-700"}>{foodCost}%</span></div>
-          <div className="flex justify-between"><span>Margen de contribución</span><span>{formatCOP(margen)}</span></div>
+          <div className="flex justify-between"><span>Margen de ganancia</span><span>{formatCOP(Math.round(margen))}</span></div>
         </div>
         {recipe.instrucciones && (
           <div>
