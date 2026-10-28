@@ -41,8 +41,9 @@ export default function CartaPage() {
     <div className="max-w-3xl mx-auto p-6">
       <style>{`
         @media print {
-          aside, nav, header, button { display: none !important; }
-          body, main { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+          aside, nav, header, button, [class*="sidebar"], [class*="Sidebar"], [class*="header"], [class*="Header"] { display: none !important; }
+          body, html { margin: 0 !important; padding: 0 !important; }
+          main { width: 100% !important; margin: 0 !important; padding: 24px !important; }
         }
       `}</style>
       <div className="flex justify-between items-start mb-8">
@@ -58,7 +59,7 @@ export default function CartaPage() {
       </div>
       <div className="space-y-2">
         {recipes.map((r) => (
-          <div key={r.id} className="flex justify-between items-center py-3 border-b border-stone-100">
+          <a href={"/dashboard/recetas/" + r.id} key={r.id} className="flex justify-between items-center py-3 border-b border-stone-100 hover:bg-stone-50">
             <div>
               <p className="font-medium">{r.nombre}</p>
               <p className="text-xs text-stone-400">costo {formatCOP(r.costo_total)}</p>
@@ -67,7 +68,7 @@ export default function CartaPage() {
               <p className="font-semibold text-lg">{formatCOP(r.precio_venta)}</p>
               <span className={`text-xs ${foodCost(r) > 30 ? "text-red-600" : "text-green-700"}`}>{foodCost(r)}%</span>
             </div>
-          </div>
+          </a>
         ))}
       </div>
     </div>
