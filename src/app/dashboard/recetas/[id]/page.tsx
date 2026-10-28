@@ -46,11 +46,11 @@ export default function FichaPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 print:p-2 print:text-xs">
-      <div className="flex justify-between items-start mb-6">
+    <div className="max-w-3xl mx-auto p-6 print:p-0 print:text-[10px] print:leading-tight">
+      <div className="flex justify-between items-start mb-6 print:mb-2">
         <div>
-          <h1 className="text-2xl font-semibold print:text-lg">{recipe.nombre}</h1>
-          <p className="text-sm text-stone-500">{recipe.porciones} porción{recipe.porciones !== 1 ? "es" : ""}</p>
+          <h1 className="text-2xl font-semibold print:text-base">{recipe.nombre}</h1>
+          <p className="text-sm text-stone-500 print:text-[10px]">{recipe.porciones} porción{recipe.porciones !== 1 ? "es" : ""}</p>
         </div>
         <div className="flex gap-2 print:hidden">
           <button onClick={() => window.print()} className="px-4 py-2 border border-stone-200 rounded-xl text-sm">Descargar PDF</button>
@@ -58,16 +58,16 @@ export default function FichaPage() {
         </div>
       </div>
       {recipe.foto && (
-        <div className="mb-4 print:mb-2">
-          <img src={recipe.foto} alt="" className="w-full max-h-40 object-cover rounded-2xl print:max-h-28" />
+        <div className="mb-4 print:mb-1">
+          <img src={recipe.foto} alt="" className="w-full max-h-40 object-cover rounded-2xl print:max-h-20" />
         </div>
       )}
-      <div className="grid sm:grid-cols-2 gap-6 print:gap-3">
+      <div className="grid sm:grid-cols-2 gap-6 print:gap-2 print:grid-cols-2">
         <div>
-          <p className="text-xs uppercase tracking-widest text-stone-400 mb-3">Ingredientes</p>
+          <p className="text-xs uppercase tracking-widest text-stone-400 mb-3 print:mb-1">Ingredientes</p>
           <div className="bg-white border border-stone-200 rounded-2xl divide-y divide-stone-100">
             {items.map((item, i) => (
-              <div key={i} className="px-4 py-3 flex justify-between text-sm">
+              <div key={i} className="px-4 py-3 flex justify-between text-sm print:py-1 print:px-2">
                 <span>{item.nombre}</span>
                 <span className="text-stone-500">{item.cantidad} {item.unidad}</span>
               </div>
@@ -75,22 +75,22 @@ export default function FichaPage() {
           </div>
         </div>
         <div>
-          <p className="text-xs uppercase tracking-widest text-stone-400 mb-3">Costos</p>
-          <div className="bg-white border border-stone-200 rounded-2xl p-4 space-y-3 text-sm">
+          <p className="text-xs uppercase tracking-widest text-stone-400 mb-3 print:mb-1">Costos</p>
+          <div className="bg-white border border-stone-200 rounded-2xl p-4 space-y-3 text-sm print:p-2 print:space-y-1">
             <div className="flex justify-between"><span>Costo de producción</span><span className="font-medium">{formatCOP(Math.round(costoPorcion))}</span></div>
             <div className="flex justify-between"><span>Precio de venta</span><span className="font-medium">{formatCOP(recipe.precio_venta)}</span></div>
             <div className="flex justify-between"><span>Impoconsumo 8%</span><span>{formatCOP(impoconsumo)}</span></div>
-            <div className="flex justify-between border-t border-stone-100 pt-3"><span className="font-medium">Precio recomendado</span><span className="font-semibold">{formatCOP(precioRecomendado)}</span></div>
+            <div className="flex justify-between border-t border-stone-100 pt-3 print:pt-1"><span className="font-medium">Precio recomendado</span><span className="font-semibold">{formatCOP(precioRecomendado)}</span></div>
             <div className="flex justify-between"><span>Food cost</span><span className={foodCost > 30 ? "text-red-600 font-medium" : "text-green-700 font-medium"}>{foodCost}%</span></div>
             <div className="flex justify-between"><span>Margen de ganancia</span><span className="font-medium">{formatCOP(Math.round(margen))}</span></div>
           </div>
         </div>
       </div>
       {recipe.instrucciones && (
-        <div className="mt-6 print:mt-3">
-          <p className="text-xs uppercase tracking-widest text-stone-400 mb-3">Montaje</p>
-          <div className="bg-white border border-stone-200 rounded-2xl p-4">
-            <p className="text-sm whitespace-pre-wrap break-words">{recipe.instrucciones}</p>
+        <div className="mt-6 print:mt-2">
+          <p className="text-xs uppercase tracking-widest text-stone-400 mb-3 print:mb-1">Montaje</p>
+          <div className="bg-white border border-stone-200 rounded-2xl p-4 print:p-2">
+            <p className="text-sm whitespace-pre-wrap break-words print:text-[10px]">{recipe.instrucciones}</p>
           </div>
         </div>
       )}
