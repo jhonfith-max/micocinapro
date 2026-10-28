@@ -112,6 +112,14 @@ export default function NuevaRecetaPage() {
             unidad: item.unidad,
           });
         }
+        if (item.sub_id) {
+          await supabase.from("recipe_components").insert({
+            recipe_id: rec.id,
+            component_recipe_id: item.sub_id,
+            cantidad: item.cantidad,
+            costo: item.costo,
+          });
+        }
       }
     }
     router.push("/dashboard/recetas");
