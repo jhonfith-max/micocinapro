@@ -41,14 +41,14 @@ export default function CartaPage() {
     <div className="max-w-3xl mx-auto p-6">
       <style>{`
         @media print {
-          aside, nav, header, button, [class*="sidebar"], [class*="Sidebar"], [class*="header"], [class*="Header"] { display: none !important; }
+          aside, nav, header, button { display: none !important; }
           body, html { margin: 0 !important; padding: 0 !important; }
           main { width: 100% !important; margin: 0 !important; padding: 24px !important; }
         }
       `}</style>
       <div className="flex justify-between items-start mb-8">
         <div>
-          {logo && <img src={logo} alt="" className="w-16 h-16 object-contain mb-3" />}
+          {logo && <img src={logo} alt="" className="w-20 h-20 object-contain mb-3 print:w-14 print:h-14" />}
           <h1 className="text-3xl font-bold">{nombre || "La carta"}</h1>
           {direccion && <p className="text-sm text-stone-500 mt-1">{direccion}</p>}
         </div>
