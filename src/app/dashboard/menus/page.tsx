@@ -5,12 +5,13 @@ import { supabase } from "@/lib/supabase";
 import { formatCOP } from "@/lib/utils";
 
 type Recipe = { id: string; nombre: string; costo_total: number; es_preparacion: boolean };
-type Menu = { id: string; nombre: string; costo_total: number; precio: number };
+type Menu = { id: string; nombre: string; costo_total: number; precio: number; entrada_id: string; fuerte_id: string; guarnicion_id: string };
 
 export default function MenusPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [menus, setMenus] = useState<Menu[]>([]);
   const [paso, setPaso] = useState(1);
+  const [editando, setEditando] = useState<string | null>(null);
   const [nombre, setNombre] = useState("");
   const [entradas, setEntradas] = useState<string[]>([]);
   const [fuertes, setFuertes] = useState<string[]>([]);
@@ -27,7 +28,7 @@ export default function MenusPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       const { data: recs } = await supabase.from("recipes").select("id, nombre, costo_total, es_preparacion").eq("user_id", user.id);
-      const { data: mens } = await supabase.from("menus_corporativos").select("id, nombre, costo_total, precio").eq("user_id", user.id);
+      const { data: mens } = await supabase.from("menus_corporativos").select("*").eq("user_id", user.id);
       setRecipes(recs || []);
       setMenus(mens || []);
     };
@@ -51,20 +52,37 @@ export default function MenusPage() {
       const { data } = supabase.storage.from("recetas").getPublicUrl(nombreArchivo);
       fotoUrl = data.publicUrl;
     }
-    await supabase.from("menus_corporativos").insert({
+    const datos = {
       user_id: user.id,
       nombre,
-      entrada_id: entradas[0] || null,
-      fuerte_id: fuertes[0] || null,
-      guarnicion_id: guarniciones[0] || null,
+      entrada_id: entradas.join(","),
+      fuerte_id: fuertes.join(","),
+      guarnicion_id: guarniciones.join(","),
       postre_id: postre || null,
       bebida_id: bebida || null,
       precio: parseFloat(precio || "0"),
       costo_total: costoTotal,
       foto: fotoUrl,
-    });
+    };
+    if (editando) {
+      await supabase.from("menus_corporativos").update(datos).eq("id", editando);
+    } else {
+      await supabase.from("menus_corporativos").insert(datos);
+    }
     setMostrarForm(false);
+    setEditando(null);
     window.location.reload();
+  };
+
+  const editar = (m: Menu) => {
+    setEditando(m.id);
+    setNombre(m.nombre);
+    setEntradas(m.entrada_id ? m.entrada_id.split(",") : []);
+    setFuertes(m.fuerte_id ? m.fuerte_id.split(",") : []);
+    setGuarniciones(m.guarnicion_id ? m.guarnicion_id.split(",") : []);
+    setPrecio(String(m.precio));
+    setMostrarForm(true);
+    setPaso(1);
   };
 
   const eliminar = async (id: string) => {
@@ -80,7 +98,7 @@ export default function MenusPage() {
             <div key={n} className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${paso >= n ? "bg-green-800 text-white" : "bg-stone-200 text-stone-500"}`}>{n}</div>
           ))}
         </div>
-        <h1 className="text-2xl font-semibold mb-2">Nuevo menú corporativo</h1>
+        <h1 className="text-2xl font-semibold mb-2">{editando ? "Editar" : "Nuevo"} menú corporativo</h1>
         <p className="text-sm text-stone-500 mb-4">Paso {paso} de 4</p>
 
         {paso === 1 && (
@@ -98,7 +116,7 @@ export default function MenusPage() {
           <div className="space-y-4">
             <div className="bg-white border border-stone-200 rounded-2xl p-4">
               <p className="font-medium mb-2">Entrada</p>
-              <select onChange={(e) => e.target.value && setEntradas([...entradas, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
+              <select onChange={(e) => e.target.value && !entradas.includes(e.target.value) && setEntradas([...entradas, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
                 <option value="">Agregar entrada</option>
                 {recipes.filter((r) => r.es_preparacion).map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
               </select>
@@ -106,7 +124,7 @@ export default function MenusPage() {
             </div>
             <div className="bg-white border border-stone-200 rounded-2xl p-4">
               <p className="font-medium mb-2">Plato fuerte</p>
-              <select onChange={(e) => e.target.value && setFuertes([...fuertes, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
+              <select onChange={(e) => e.target.value && !fuertes.includes(e.target.value) && setFuertes([...fuertes, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
                 <option value="">Agregar fuerte</option>
                 {recipes.filter((r) => !r.es_preparacion).map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
               </select>
@@ -128,7 +146,7 @@ export default function MenusPage() {
               <>
                 <div className="bg-white border border-stone-200 rounded-2xl p-4">
                   <p className="font-medium mb-2">Guarnición</p>
-                  <select onChange={(e) => e.target.value && setGuarniciones([...guarniciones, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
+                  <select onChange={(e) => e.target.value && !guarniciones.includes(e.target.value) && setGuarniciones([...guarniciones, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
                     <option value="">Agregar</option>
                     {recipes.filter((r) => r.es_preparacion).map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
                   </select>
@@ -176,7 +194,7 @@ export default function MenusPage() {
             {costoTotal > 0 && (
               <div className="bg-stone-50 rounded-2xl p-4 space-y-2 text-sm">
                 <div className="flex justify-between"><span>Costo de platos</span><span>{formatCOP(Math.round(costoBase))}</span></div>
-                <div className="flex justify-between"><span>Contingencia 7% <span className="text-xs text-stone-400">(merma y no-shows)</span></span><span>{formatCOP(contingencia)}</span></div>
+                <div className="flex justify-between"><span>Contingencia 7% <span className="text-xs text-stone-400">(extra por merma y personas que no llegan)</span></span><span>{formatCOP(contingencia)}</span></div>
                 <div className="flex justify-between border-t border-stone-200 pt-2"><span>Costo total</span><span className="font-medium">{formatCOP(costoTotal)}</span></div>
                 <div className="flex justify-between"><span>Precio recomendado (32%)</span><span className="font-semibold">{formatCOP(precioRecomendado)}</span></div>
                 {precio && <div className="flex justify-between"><span>Food cost</span><span className={foodCost > 32 ? "text-red-600" : "text-green-700"}>{foodCost}%</span></div>}
@@ -197,7 +215,7 @@ export default function MenusPage() {
       <p className="text-xs uppercase tracking-widest text-green-800">Si haces almuerzos</p>
       <h1 className="text-2xl sm:text-3xl font-semibold mt-1">Corporativo</h1>
       <p className="text-stone-500 mt-1 text-sm">Entrada, fuerte y bebida. Un solo precio.</p>
-      <button onClick={() => setMostrarForm(true)} className="mt-4 px-4 py-2 bg-green-800 text-white text-sm rounded-xl">+ Nuevo menú</button>
+      <button onClick={() => { setMostrarForm(true); setEditando(null); setNombre(""); setEntradas([]); setFuertes([]); setGuarniciones([]); setPaso(1); }} className="mt-4 px-4 py-2 bg-green-800 text-white text-sm rounded-xl">+ Nuevo menú</button>
       <div className="mt-6 space-y-3">
         {menus.map((m) => (
           <div key={m.id} className="bg-white border border-stone-200 rounded-2xl p-4">
@@ -209,6 +227,7 @@ export default function MenusPage() {
               </div>
               <div className="flex gap-2">
                 <a href={"/dashboard/menus/" + m.id} className="text-sm text-green-800">Ver ficha</a>
+                <button onClick={() => editar(m)} className="text-sm text-green-800">Editar</button>
                 <button onClick={() => eliminar(m.id)} className="text-sm text-stone-400">Eliminar</button>
               </div>
             </div>
