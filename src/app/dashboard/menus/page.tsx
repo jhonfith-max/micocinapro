@@ -10,6 +10,7 @@ type Menu = { id: string; nombre: string; costo_total: number; precio: number };
 export default function MenusPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [menus, setMenus] = useState<Menu[]>([]);
+  const [paso, setPaso] = useState(1);
   const [nombre, setNombre] = useState("");
   const [entradas, setEntradas] = useState<string[]>([]);
   const [fuertes, setFuertes] = useState<string[]>([]);
@@ -19,6 +20,7 @@ export default function MenusPage() {
   const [precio, setPrecio] = useState("");
   const [foto, setFoto] = useState<File | null>(null);
   const [mostrarForm, setMostrarForm] = useState(false);
+  const [mostrarOpcional, setMostrarOpcional] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -73,70 +75,119 @@ export default function MenusPage() {
   if (mostrarForm) {
     return (
       <div className="max-w-2xl">
-        <h1 className="text-2xl font-semibold mb-4">Nuevo menú corporativo</h1>
-        <a href="/dashboard/recetas/nueva" className="inline-block mb-4 px-4 py-2 bg-green-800 text-white text-sm rounded-xl">+ Crear plato para este menú</a>
-        <div className="space-y-4">
-          <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre del menú" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
-          <div className="bg-white border border-stone-200 rounded-2xl p-4">
-            <p className="font-medium mb-1">Entradas <span className="text-xs text-stone-400">(subrecetas)</span></p>
-            <select onChange={(e) => e.target.value && setEntradas([...entradas, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
-              <option value="">Agregar entrada</option>
-              {recipes.filter((r) => r.es_preparacion).map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
-            </select>
-            {entradas.map((id) => <p key={id} className="text-sm mt-1">{recipes.find((r) => r.id === id)?.nombre} <button onClick={() => setEntradas(entradas.filter((x) => x !== id))} className="text-red-500">×</button></p>)}
-          </div>
-          <div className="bg-white border border-stone-200 rounded-2xl p-4">
-            <p className="font-medium mb-1">Platos fuertes</p>
-            <select onChange={(e) => e.target.value && setFuertes([...fuertes, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
-              <option value="">Agregar fuerte</option>
-              {recipes.filter((r) => !r.es_preparacion).map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
-            </select>
-            {fuertes.map((id) => <p key={id} className="text-sm mt-1">{recipes.find((r) => r.id === id)?.nombre} <button onClick={() => setFuertes(fuertes.filter((x) => x !== id))} className="text-red-500">×</button></p>)}
-          </div>
-          <div className="bg-white border border-stone-200 rounded-2xl p-4">
-            <p className="font-medium mb-1">Guarniciones <span className="text-xs text-stone-400">(subrecetas)</span></p>
-            <select onChange={(e) => e.target.value && setGuarniciones([...guarniciones, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
-              <option value="">Agregar guarnición</option>
-              {recipes.filter((r) => r.es_preparacion).map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
-            </select>
-            {guarniciones.map((id) => <p key={id} className="text-sm mt-1">{recipes.find((r) => r.id === id)?.nombre} <button onClick={() => setGuarniciones(guarniciones.filter((x) => x !== id))} className="text-red-500">×</button></p>)}
-          </div>
-          <div className="bg-white border border-stone-200 rounded-2xl p-4">
-            <p className="font-medium mb-1">Postre</p>
-            <select value={postre} onChange={(e) => setPostre(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
-              <option value="">Elegir</option>
-              {recipes.map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
-            </select>
-          </div>
-          <div className="bg-white border border-stone-200 rounded-2xl p-4">
-            <p className="font-medium mb-1">Bebida</p>
-            <select value={bebida} onChange={(e) => setBebida(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
-              <option value="">Elegir</option>
-              {recipes.map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
-            </select>
-          </div>
-          <div className="bg-white border border-stone-200 rounded-2xl p-4">
-            <p className="font-medium mb-1">Precio del menú</p>
-            <input type="number" value={precio} onChange={(e) => setPrecio(e.target.value)} placeholder="35000" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
-          </div>
-          <div className="bg-white border border-stone-200 rounded-2xl p-4">
-            <label className="block text-sm text-stone-600 mb-1.5">Foto del menú</label>
-            <input type="file" accept="image/*" onChange={(e) => setFoto(e.target.files?.[0] || null)} className="w-full text-sm" />
-          </div>
-          {costoTotal > 0 && (
-            <div className="bg-stone-50 rounded-2xl p-4 space-y-2 text-sm">
-              <div className="flex justify-between"><span>Costo de platos</span><span>{formatCOP(Math.round(costoBase))}</span></div>
-              <div className="flex justify-between"><span>Contingencia 7% <span className="text-xs text-stone-400">(merma y no-shows)</span></span><span>{formatCOP(contingencia)}</span></div>
-              <div className="flex justify-between border-t border-stone-200 pt-2"><span>Costo total</span><span className="font-medium">{formatCOP(costoTotal)}</span></div>
-              <div className="flex justify-between"><span>Precio recomendado (32%)</span><span className="font-semibold">{formatCOP(precioRecomendado)}</span></div>
-              {precio && <div className="flex justify-between"><span>Food cost</span><span className={foodCost > 32 ? "text-red-600" : "text-green-700"}>{foodCost}%</span></div>}
-            </div>
-          )}
-          <div className="flex gap-3">
-            <button onClick={guardar} className="px-6 py-3 bg-green-800 text-white rounded-xl">Guardar</button>
-            <button onClick={() => setMostrarForm(false)} className="px-6 py-3 border rounded-xl">Cancelar</button>
-          </div>
+        <div className="flex items-center gap-2 mb-4">
+          {[1, 2, 3, 4].map((n) => (
+            <div key={n} className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${paso >= n ? "bg-green-800 text-white" : "bg-stone-200 text-stone-500"}`}>{n}</div>
+          ))}
         </div>
+        <h1 className="text-2xl font-semibold mb-2">Nuevo menú corporativo</h1>
+        <p className="text-sm text-stone-500 mb-4">Paso {paso} de 4</p>
+
+        {paso === 1 && (
+          <div className="space-y-4">
+            <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre del menú" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-amber-800">
+              Si las cantidades son diferentes a la carta, crea un plato nuevo.
+            </div>
+            <a href="/dashboard/recetas/nueva" className="inline-block px-4 py-2 bg-green-800 text-white text-sm rounded-xl">+ Crear plato</a>
+            <button onClick={() => setPaso(2)} className="block w-full px-4 py-3 bg-green-800 text-white rounded-xl">Siguiente</button>
+          </div>
+        )}
+
+        {paso === 2 && (
+          <div className="space-y-4">
+            <div className="bg-white border border-stone-200 rounded-2xl p-4">
+              <p className="font-medium mb-2">Entrada</p>
+              <select onChange={(e) => e.target.value && setEntradas([...entradas, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
+                <option value="">Agregar entrada</option>
+                {recipes.filter((r) => r.es_preparacion).map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
+              </select>
+              {entradas.map((id) => <p key={id} className="text-sm mt-2">{recipes.find((r) => r.id === id)?.nombre} <button onClick={() => setEntradas(entradas.filter((x) => x !== id))} className="text-red-500">×</button></p>)}
+            </div>
+            <div className="bg-white border border-stone-200 rounded-2xl p-4">
+              <p className="font-medium mb-2">Plato fuerte</p>
+              <select onChange={(e) => e.target.value && setFuertes([...fuertes, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
+                <option value="">Agregar fuerte</option>
+                {recipes.filter((r) => !r.es_preparacion).map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
+              </select>
+              {fuertes.map((id) => <p key={id} className="text-sm mt-2">{recipes.find((r) => r.id === id)?.nombre} <button onClick={() => setFuertes(fuertes.filter((x) => x !== id))} className="text-red-500">×</button></p>)}
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setPaso(1)} className="px-4 py-3 border rounded-xl">Anterior</button>
+              <button onClick={() => setPaso(3)} className="px-4 py-3 bg-green-800 text-white rounded-xl">Siguiente</button>
+            </div>
+          </div>
+        )}
+
+        {paso === 3 && (
+          <div className="space-y-4">
+            <button onClick={() => setMostrarOpcional(!mostrarOpcional)} className="text-sm text-green-800">
+              {mostrarOpcional ? "Ocultar" : "Agregar"} guarnición, postre o bebida
+            </button>
+            {mostrarOpcional && (
+              <>
+                <div className="bg-white border border-stone-200 rounded-2xl p-4">
+                  <p className="font-medium mb-2">Guarnición</p>
+                  <select onChange={(e) => e.target.value && setGuarniciones([...guarniciones, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
+                    <option value="">Agregar</option>
+                    {recipes.filter((r) => r.es_preparacion).map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
+                  </select>
+                  {guarniciones.map((id) => <p key={id} className="text-sm mt-2">{recipes.find((r) => r.id === id)?.nombre} <button onClick={() => setGuarniciones(guarniciones.filter((x) => x !== id))} className="text-red-500">×</button></p>)}
+                </div>
+                <div className="bg-white border border-stone-200 rounded-2xl p-4">
+                  <p className="font-medium mb-2">Postre</p>
+                  <select value={postre} onChange={(e) => setPostre(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
+                    <option value="">Elegir</option>
+                    {recipes.map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
+                  </select>
+                </div>
+                <div className="bg-white border border-stone-200 rounded-2xl p-4">
+                  <p className="font-medium mb-2">Bebida</p>
+                  <select value={bebida} onChange={(e) => setBebida(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
+                    <option value="">Elegir</option>
+                    {recipes.map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
+                  </select>
+                </div>
+              </>
+            )}
+            <div className="flex gap-3">
+              <button onClick={() => setPaso(2)} className="px-4 py-3 border rounded-xl">Anterior</button>
+              <button onClick={() => setPaso(4)} className="px-4 py-3 bg-green-800 text-white rounded-xl">Siguiente</button>
+            </div>
+          </div>
+        )}
+
+        {paso === 4 && (
+          <div className="space-y-4">
+            <div className="bg-stone-50 rounded-2xl p-4 space-y-1 text-sm">
+              <p className="font-medium mb-2">Resumen</p>
+              {entradas.map((id) => <p key={id}>Entrada: {recipes.find((r) => r.id === id)?.nombre}</p>)}
+              {fuertes.map((id) => <p key={id}>Fuerte: {recipes.find((r) => r.id === id)?.nombre}</p>)}
+              {guarniciones.map((id) => <p key={id}>Guarnición: {recipes.find((r) => r.id === id)?.nombre}</p>)}
+            </div>
+            <div className="bg-white border border-stone-200 rounded-2xl p-4">
+              <p className="font-medium mb-2">Precio del menú</p>
+              <input type="number" value={precio} onChange={(e) => setPrecio(e.target.value)} placeholder="35000" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+            </div>
+            <div className="bg-white border border-stone-200 rounded-2xl p-4">
+              <label className="block text-sm text-stone-600 mb-1.5">Foto</label>
+              <input type="file" accept="image/*" onChange={(e) => setFoto(e.target.files?.[0] || null)} className="w-full text-sm" />
+            </div>
+            {costoTotal > 0 && (
+              <div className="bg-stone-50 rounded-2xl p-4 space-y-2 text-sm">
+                <div className="flex justify-between"><span>Costo de platos</span><span>{formatCOP(Math.round(costoBase))}</span></div>
+                <div className="flex justify-between"><span>Contingencia 7% <span className="text-xs text-stone-400">(merma y no-shows)</span></span><span>{formatCOP(contingencia)}</span></div>
+                <div className="flex justify-between border-t border-stone-200 pt-2"><span>Costo total</span><span className="font-medium">{formatCOP(costoTotal)}</span></div>
+                <div className="flex justify-between"><span>Precio recomendado (32%)</span><span className="font-semibold">{formatCOP(precioRecomendado)}</span></div>
+                {precio && <div className="flex justify-between"><span>Food cost</span><span className={foodCost > 32 ? "text-red-600" : "text-green-700"}>{foodCost}%</span></div>}
+              </div>
+            )}
+            <div className="flex gap-3">
+              <button onClick={() => setPaso(3)} className="px-4 py-3 border rounded-xl">Anterior</button>
+              <button onClick={guardar} className="px-4 py-3 bg-green-800 text-white rounded-xl">Guardar</button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
