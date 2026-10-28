@@ -225,17 +225,22 @@ export default function MenusPage() {
       <button onClick={() => { setMostrarForm(true); setEditando(null); setNombre(""); setEntradas([]); setFuertes([]); setGuarniciones([]); setInstrucciones(""); setPaso(1); }} className="mt-4 px-4 py-2 bg-green-800 text-white text-sm rounded-xl">+ Nuevo menú</button>
       <div className="mt-6 space-y-3">
         {menus.map((m) => (
-          <div key={m.id} className="bg-white border border-stone-200 rounded-2xl p-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="font-medium">{m.nombre}</p>
-                <p className="text-sm text-stone-500">Costo: {formatCOP(m.costo_total)} · Food cost: {Math.round((m.costo_total / m.precio) * 100)}%</p>
-                <p className="text-sm text-stone-500">Precio: {formatCOP(m.precio)}</p>
+          <div key={m.id} className="bg-white border border-stone-200 rounded-2xl p-5 hover:border-green-200 transition-colors">
+            <div className="flex justify-between items-start gap-4">
+              <div className="flex-1">
+                <p className="font-semibold text-lg">{m.nombre}</p>
+                <div className="flex items-center gap-3 mt-2 text-sm">
+                  <span className="text-stone-500">Costo {formatCOP(m.costo_total)}</span>
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${Math.round((m.costo_total / m.precio) * 100) > 32 ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
+                    {Math.round((m.costo_total / m.precio) * 100)}%
+                  </span>
+                </div>
+                <p className="text-sm text-stone-400 mt-1">Precio {formatCOP(m.precio)}</p>
               </div>
-              <div className="flex gap-2">
-                <a href={"/dashboard/menus/" + m.id} className="text-sm text-green-800">Ver ficha</a>
-                <button onClick={() => editar(m)} className="text-sm text-green-800">Editar</button>
-                <button onClick={() => eliminar(m.id)} className="text-sm text-stone-400">Eliminar</button>
+              <div className="flex flex-col items-end gap-1">
+                <a href={"/dashboard/menus/" + m.id} className="text-sm text-green-800 hover:underline">Ver ficha</a>
+                <button onClick={() => editar(m)} className="text-sm text-stone-500 hover:text-green-800">Editar</button>
+                <button onClick={() => eliminar(m.id)} className="text-sm text-stone-400 hover:text-red-500">Eliminar</button>
               </div>
             </div>
           </div>
