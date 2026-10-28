@@ -21,12 +21,8 @@ export default function FichaPage() {
       const { data: ings } = await supabase.from("ingredients").select("id, nombre");
       const { data: subs } = await supabase.from("recipes").select("id, nombre");
       const lista: Item[] = [];
-      if (recIngs) {
-        recIngs.forEach((ri) => lista.push({ nombre: ings?.find((i) => i.id === ri.ingredient_id)?.nombre || "", cantidad: ri.cantidad, unidad: ri.unidad || "g", costo: ri.costo }));
-      }
-      if (recSubs) {
-        recSubs.forEach((rs) => lista.push({ nombre: subs?.find((s) => s.id === rs.component_recipe_id)?.nombre || "", cantidad: rs.cantidad, unidad: "porción", costo: rs.costo }));
-      }
+      if (recIngs) recIngs.forEach((ri) => lista.push({ nombre: ings?.find((i) => i.id === ri.ingredient_id)?.nombre || "", cantidad: ri.cantidad, unidad: ri.unidad || "g", costo: ri.costo }));
+      if (recSubs) recSubs.forEach((rs) => lista.push({ nombre: subs?.find((s) => s.id === rs.component_recipe_id)?.nombre || "", cantidad: rs.cantidad, unidad: "porción", costo: rs.costo }));
       setItems(lista);
     };
     load();
@@ -37,11 +33,11 @@ export default function FichaPage() {
   const costoPorcion = recipe.costo_total / (recipe.porciones || 1);
   const foodCost = Math.round((costoPorcion / recipe.precio_venta) * 100);
   const impoconsumo = Math.round(recipe.precio_venta * 0.08);
-  const precioFinal = recipe.precio_venta + impoconsumo;
+  const precioRecomendado = Math.round(costoPorcion / 0.3);
   const margen = recipe.precio_venta - costoPorcion;
 
   return (
-    <div className="max-w-2xl mx-auto p-6 print:p-4">
+    <div className="max-w-2xl mx-auto p-6 print:p-4 print:max-w-full">
       <div className="flex justify-between items-start mb-6">
         <div>
           <h1 className="text-2xl font-semibold">{recipe.nombre}</h1>
@@ -64,14 +60,14 @@ export default function FichaPage() {
           <div className="flex justify-between"><span>Costo de producción</span><span>{formatCOP(Math.round(costoPorcion))}</span></div>
           <div className="flex justify-between"><span>Precio de venta</span><span>{formatCOP(recipe.precio_venta)}</span></div>
           <div className="flex justify-between"><span>Impoconsumo 8%</span><span>{formatCOP(impoconsumo)}</span></div>
-          <div className="flex justify-between font-medium"><span>Precio final</span><span>{formatCOP(precioFinal)}</span></div>
+          <div className="flex justify-between font-medium"><span>Precio recomendado</span><span>{formatCOP(precioRecomendado)}</span></div>
           <div className="flex justify-between"><span>Food cost</span><span className={foodCost > 30 ? "text-red-600" : "text-green-700"}>{foodCost}%</span></div>
           <div className="flex justify-between"><span>Margen de ganancia</span><span>{formatCOP(Math.round(margen))}</span></div>
         </div>
         {recipe.instrucciones && (
           <div className="print:break-inside-avoid">
             <p className="text-xs uppercase tracking-widest text-stone-400 mb-2">Montaje</p>
-            <p className="text-sm whitespace-pre-wrap break-words">{recipe.instrucciones}</p>
+            <p className="text-sm whitespace-pre-wrap break-all max-w-full overflow-hidden">{recipe.instrucciones}</p>
           </div>
         )}
       </div>
