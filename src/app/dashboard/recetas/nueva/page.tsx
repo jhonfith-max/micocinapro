@@ -99,6 +99,7 @@ export default function NuevaRecetaPage() {
       costo_total: costoTotal,
       instrucciones,
       foto: fotoUrl,
+      es_preparacion: false,
     }).select().single();
     if (rec) {
       for (const item of items) {
