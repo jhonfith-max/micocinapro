@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatCOP } from "@/lib/utils";
 
-type Recipe = { id: string; nombre: string; costo_total: number };
+type Recipe = { id: string; nombre: string; costo_total: number; es_preparacion: boolean };
 type Menu = { id: string; nombre: string; costo_total: number; precio: number };
 
 export default function MenusPage() {
@@ -24,7 +24,7 @@ export default function MenusPage() {
     const load = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const { data: recs } = await supabase.from("recipes").select("id, nombre, costo_total").eq("user_id", user.id).eq("es_preparacion", false);
+      const { data: recs } = await supabase.from("recipes").select("id, nombre, costo_total, es_preparacion").eq("user_id", user.id);
       const { data: mens } = await supabase.from("menus_corporativos").select("id, nombre, costo_total, precio").eq("user_id", user.id);
       setRecipes(recs || []);
       setMenus(mens || []);
@@ -74,29 +74,30 @@ export default function MenusPage() {
     return (
       <div className="max-w-2xl">
         <h1 className="text-2xl font-semibold mb-4">Nuevo menú corporativo</h1>
+        <a href="/dashboard/recetas/nueva" className="inline-block mb-4 px-4 py-2 bg-green-800 text-white text-sm rounded-xl">+ Crear plato para este menú</a>
         <div className="space-y-4">
           <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre del menú" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
           <div className="bg-white border border-stone-200 rounded-2xl p-4">
-            <p className="font-medium mb-1">Entradas <span className="text-xs text-stone-400">(puedes elegir varias)</span></p>
+            <p className="font-medium mb-1">Entradas <span className="text-xs text-stone-400">(subrecetas)</span></p>
             <select onChange={(e) => e.target.value && setEntradas([...entradas, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
               <option value="">Agregar entrada</option>
-              {recipes.map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
+              {recipes.filter((r) => r.es_preparacion).map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
             </select>
             {entradas.map((id) => <p key={id} className="text-sm mt-1">{recipes.find((r) => r.id === id)?.nombre} <button onClick={() => setEntradas(entradas.filter((x) => x !== id))} className="text-red-500">×</button></p>)}
           </div>
           <div className="bg-white border border-stone-200 rounded-2xl p-4">
-            <p className="font-medium mb-1">Platos fuertes <span className="text-xs text-stone-400">(puedes elegir varias)</span></p>
+            <p className="font-medium mb-1">Platos fuertes</p>
             <select onChange={(e) => e.target.value && setFuertes([...fuertes, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
               <option value="">Agregar fuerte</option>
-              {recipes.map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
+              {recipes.filter((r) => !r.es_preparacion).map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
             </select>
             {fuertes.map((id) => <p key={id} className="text-sm mt-1">{recipes.find((r) => r.id === id)?.nombre} <button onClick={() => setFuertes(fuertes.filter((x) => x !== id))} className="text-red-500">×</button></p>)}
           </div>
           <div className="bg-white border border-stone-200 rounded-2xl p-4">
-            <p className="font-medium mb-1">Guarniciones <span className="text-xs text-stone-400">(puedes elegir varias)</span></p>
+            <p className="font-medium mb-1">Guarniciones <span className="text-xs text-stone-400">(subrecetas)</span></p>
             <select onChange={(e) => e.target.value && setGuarniciones([...guarniciones, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
               <option value="">Agregar guarnición</option>
-              {recipes.map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
+              {recipes.filter((r) => r.es_preparacion).map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
             </select>
             {guarniciones.map((id) => <p key={id} className="text-sm mt-1">{recipes.find((r) => r.id === id)?.nombre} <button onClick={() => setGuarniciones(guarniciones.filter((x) => x !== id))} className="text-red-500">×</button></p>)}
           </div>
@@ -148,12 +149,18 @@ export default function MenusPage() {
       <button onClick={() => setMostrarForm(true)} className="mt-4 px-4 py-2 bg-green-800 text-white text-sm rounded-xl">+ Nuevo menú</button>
       <div className="mt-6 space-y-3">
         {menus.map((m) => (
-          <div key={m.id} className="bg-white border border-stone-200 rounded-2xl p-4 flex justify-between items-center">
-            <div>
-              <p className="font-medium">{m.nombre}</p>
-              <p className="text-sm text-stone-500">{formatCOP(m.costo_total)} · {formatCOP(m.precio)}</p>
+          <div key={m.id} className="bg-white border border-stone-200 rounded-2xl p-4">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="font-medium">{m.nombre}</p>
+                <p className="text-sm text-stone-500">Costo: {formatCOP(m.costo_total)}</p>
+                <p className="text-sm text-stone-500">Precio: {formatCOP(m.precio)}</p>
+              </div>
+              <div className="flex gap-2">
+                <a href={"/dashboard/menus/" + m.id} className="text-sm text-green-800">Ver ficha</a>
+                <button onClick={() => eliminar(m.id)} className="text-sm text-stone-400">Eliminar</button>
+              </div>
             </div>
-            <button onClick={() => eliminar(m.id)} className="text-sm text-stone-400">Eliminar</button>
           </div>
         ))}
       </div>
