@@ -59,7 +59,7 @@ export default function FichaPage() {
       </div>
       {recipe.foto && (
         <div className="mb-4 print:mb-1">
-          <img src={recipe.foto} alt="" className="w-full max-h-40 object-cover rounded-2xl print:max-h-20" />
+          <img src={recipe.foto} alt="" className="w-full max-h-40 object-cover rounded-2xl print:max-h-12 print:w-24" />
         </div>
       )}
       <div className="grid sm:grid-cols-2 gap-6 print:gap-2 print:grid-cols-2">
