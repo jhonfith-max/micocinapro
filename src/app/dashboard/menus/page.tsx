@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { formatCOP } from "@/lib/utils";
 
 type Recipe = { id: string; nombre: string; costo_total: number; es_preparacion: boolean };
-type Menu = { id: string; nombre: string; costo_total: number; precio: number; entrada_id: string; fuerte_id: string; guarnicion_id: string };
+type Menu = { id: string; nombre: string; costo_total: number; precio: number; entrada_id: string; fuerte_id: string; guarnicion_id: string; instrucciones: string };
 
 export default function MenusPage() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -19,6 +19,7 @@ export default function MenusPage() {
   const [postre, setPostre] = useState("");
   const [bebida, setBebida] = useState("");
   const [precio, setPrecio] = useState("");
+  const [instrucciones, setInstrucciones] = useState("");
   const [foto, setFoto] = useState<File | null>(null);
   const [mostrarForm, setMostrarForm] = useState(false);
   const [mostrarOpcional, setMostrarOpcional] = useState(false);
@@ -62,6 +63,7 @@ export default function MenusPage() {
       bebida_id: bebida || null,
       precio: parseFloat(precio || "0"),
       costo_total: costoTotal,
+      instrucciones,
       foto: fotoUrl,
     };
     if (editando) {
@@ -81,6 +83,7 @@ export default function MenusPage() {
     setFuertes(m.fuerte_id ? m.fuerte_id.split(",") : []);
     setGuarniciones(m.guarnicion_id ? m.guarnicion_id.split(",") : []);
     setPrecio(String(m.precio));
+    setInstrucciones(m.instrucciones || "");
     setMostrarForm(true);
     setPaso(1);
   };
@@ -184,6 +187,10 @@ export default function MenusPage() {
               {guarniciones.map((id) => <p key={id}>Guarnición: {recipes.find((r) => r.id === id)?.nombre}</p>)}
             </div>
             <div className="bg-white border border-stone-200 rounded-2xl p-4">
+              <p className="font-medium mb-2">Instrucciones</p>
+              <textarea value={instrucciones} onChange={(e) => setInstrucciones(e.target.value)} rows={3} placeholder="Cómo se arma el menú" className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm" />
+            </div>
+            <div className="bg-white border border-stone-200 rounded-2xl p-4">
               <p className="font-medium mb-2">Precio del menú</p>
               <input type="number" value={precio} onChange={(e) => setPrecio(e.target.value)} placeholder="35000" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
             </div>
@@ -215,14 +222,14 @@ export default function MenusPage() {
       <p className="text-xs uppercase tracking-widest text-green-800">Si haces almuerzos</p>
       <h1 className="text-2xl sm:text-3xl font-semibold mt-1">Corporativo</h1>
       <p className="text-stone-500 mt-1 text-sm">Entrada, fuerte y bebida. Un solo precio.</p>
-      <button onClick={() => { setMostrarForm(true); setEditando(null); setNombre(""); setEntradas([]); setFuertes([]); setGuarniciones([]); setPaso(1); }} className="mt-4 px-4 py-2 bg-green-800 text-white text-sm rounded-xl">+ Nuevo menú</button>
+      <button onClick={() => { setMostrarForm(true); setEditando(null); setNombre(""); setEntradas([]); setFuertes([]); setGuarniciones([]); setInstrucciones(""); setPaso(1); }} className="mt-4 px-4 py-2 bg-green-800 text-white text-sm rounded-xl">+ Nuevo menú</button>
       <div className="mt-6 space-y-3">
         {menus.map((m) => (
           <div key={m.id} className="bg-white border border-stone-200 rounded-2xl p-4">
             <div className="flex justify-between items-start">
               <div>
                 <p className="font-medium">{m.nombre}</p>
-                <p className="text-sm text-stone-500">Costo: {formatCOP(m.costo_total)}</p>
+                <p className="text-sm text-stone-500">Costo: {formatCOP(m.costo_total)} · Food cost: {Math.round((m.costo_total / m.precio) * 100)}%</p>
                 <p className="text-sm text-stone-500">Precio: {formatCOP(m.precio)}</p>
               </div>
               <div className="flex gap-2">
