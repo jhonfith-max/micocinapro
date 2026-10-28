@@ -56,7 +56,8 @@ export default function EditarRecetaPage() {
 
   const agregar = () => {
     if (!seleccionado || !cantidad) return;
-    const costo = seleccionado.precio_por_unidad * parseFloat(cantidad);
+    const precioGramo = seleccionado.unidad_compra === "kg" ? seleccionado.precio_por_unidad / 1000 : seleccionado.precio_por_unidad;
+    const costo = precioGramo * parseFloat(cantidad);
     setItems([...items, { ingredient_id: seleccionado.id, nombre: seleccionado.nombre, cantidad: parseFloat(cantidad), unidad: "g", costo }]);
     setSeleccionado(null);
     setCantidad("");

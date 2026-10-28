@@ -55,7 +55,8 @@ export default function NuevaRecetaPage() {
       setItems([...items, { sub_id: sub.id, nombre: sub.nombre, cantidad: parseFloat(cantidad), unidad: "porción", costo }]);
     } else {
       const ing = seleccionado as Ingredient;
-      let costo = ing.precio_por_unidad * parseFloat(cantidad);
+      const precioGramo = ing.unidad_compra === "kg" ? ing.precio_por_unidad / 1000 : ing.precio_por_unidad;
+      let costo = precioGramo * parseFloat(cantidad);
       let nombreUso = ing.nombre;
       if (uso === "limpio" || uso === "cocido") {
         const y = yields.find((x) => x.ingredient_id === ing.id && x.tipo === (uso === "limpio" ? "limpieza" : "coccion"));
