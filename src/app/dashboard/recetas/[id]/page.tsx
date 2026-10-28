@@ -36,21 +36,33 @@ export default function FichaPage() {
   const precioRecomendado = Math.round(costoPorcion / 0.3);
   const margen = recipe.precio_venta - costoPorcion;
 
+  const compartir = async () => {
+    if (navigator.share) {
+      await navigator.share({ title: recipe.nombre, url: window.location.href });
+    } else {
+      await navigator.clipboard.writeText(window.location.href);
+      alert("Enlace copiado");
+    }
+  };
+
   return (
-    <div className="max-w-3xl mx-auto p-6 print:p-4">
+    <div className="max-w-3xl mx-auto p-6 print:p-2 print:text-xs">
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h1 className="text-2xl font-semibold">{recipe.nombre}</h1>
+          <h1 className="text-2xl font-semibold print:text-lg">{recipe.nombre}</h1>
           <p className="text-sm text-stone-500">{recipe.porciones} porción{recipe.porciones !== 1 ? "es" : ""}</p>
         </div>
-        <button onClick={() => window.print()} className="px-4 py-2 border border-stone-200 rounded-xl text-sm print:hidden">Imprimir</button>
+        <div className="flex gap-2 print:hidden">
+          <button onClick={() => window.print()} className="px-4 py-2 border border-stone-200 rounded-xl text-sm">Descargar PDF</button>
+          <button onClick={compartir} className="px-4 py-2 border border-stone-200 rounded-xl text-sm">Compartir</button>
+        </div>
       </div>
       {recipe.foto && (
-        <div className="mb-6">
-          <img src={recipe.foto} alt="" className="w-full max-h-64 object-cover rounded-2xl" />
+        <div className="mb-4 print:mb-2">
+          <img src={recipe.foto} alt="" className="w-full max-h-40 object-cover rounded-2xl print:max-h-28" />
         </div>
       )}
-      <div className="grid sm:grid-cols-2 gap-6">
+      <div className="grid sm:grid-cols-2 gap-6 print:gap-3">
         <div>
           <p className="text-xs uppercase tracking-widest text-stone-400 mb-3">Ingredientes</p>
           <div className="bg-white border border-stone-200 rounded-2xl divide-y divide-stone-100">
@@ -75,7 +87,7 @@ export default function FichaPage() {
         </div>
       </div>
       {recipe.instrucciones && (
-        <div className="mt-6">
+        <div className="mt-6 print:mt-3">
           <p className="text-xs uppercase tracking-widest text-stone-400 mb-3">Montaje</p>
           <div className="bg-white border border-stone-200 rounded-2xl p-4">
             <p className="text-sm whitespace-pre-wrap break-words">{recipe.instrucciones}</p>
