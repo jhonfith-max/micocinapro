@@ -72,8 +72,16 @@ export default function RecetarioPage() {
 
       const { data: subs } = await supabase
         .from("recipe_components")
-        .select("recipe_id, cantidad, costo, recipes(nombre)")
+        .select("recipe_id, cantidad, costo, component_recipe_id")
         .in("recipe_id", ids);
+
+      const subIds = subs?.map((s: any) => s.component_recipe_id).filter(Boolean) || [];
+      const { data: subRecipes } = subIds.length
+        ? await supabase.from("recipes").select("id, nombre").in("id", subIds)
+        : { data: [] };
+
+      const subNameMap: Record<string, string> = {};
+      subRecipes?.forEach((s: any) => { subNameMap[s.id] = s.nombre; });
 
       const mapSub: Record<string, Sub[]> = {};
       if (subs) {
@@ -81,7 +89,7 @@ export default function RecetarioPage() {
           const rid = row.recipe_id;
           if (!mapSub[rid]) mapSub[rid] = [];
           mapSub[rid].push({
-            nombre: row.recipes?.nombre || "Subreceta",
+            nombre: subNameMap[row.component_recipe_id] || "Subreceta",
             cantidad: Number(row.cantidad) || 0,
             costo: Number(row.costo) || 0,
           });
