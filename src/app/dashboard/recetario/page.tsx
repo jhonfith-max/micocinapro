@@ -179,7 +179,7 @@ export default function RecetarioPage() {
                 <div className="grid grid-cols-2 gap-4 text-xs border-t border-stone-300 pt-3">
                   <div>
                     <p>Subtotal materia prima: <span className="font-medium">{formatCOP(subtotal)}</span></p>
-                    <p>Costos indirectos (8%): <span className="font-medium">{formatCOP(indirecto)}</span></p>
+                    <p>Impoconsumo (8%): <span className="font-medium">{formatCOP(indirecto)}</span></p>
                     <p>Costo total: <span className="font-medium">{formatCOP(total)}</span></p>
                   </div>
                   <div className="text-right">
