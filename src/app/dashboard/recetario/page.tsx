@@ -14,7 +14,7 @@ type Recipe = {
   costo_total?: number;
   porciones?: number;
 };
-type Ing = { nombre: string; cantidad: number; unidad: string; costo?: number };
+type Ing = { nombre: string; cantidad: number; unidad: string; costo: number };
 
 export default function RecetarioPage() {
   const [recetas, setRecetas] = useState<Recipe[]>([]);
@@ -25,13 +25,28 @@ export default function RecetarioPage() {
     const load = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const { data } = await supabase.from("recipes").select("id, nombre, instrucciones, es_preparacion, costo_porcion, precio_venta, costo_total, porciones").eq("user_id", user.id);
-      setRecetas(data || []);
-      const { data: ings } = await supabase.from("recipe_ingredients").select("recipe_id, cantidad, unidad, costo, ingredients(nombre)").eq("user_id", user.id);
+
+      const { data: recipes } = await supabase
+        .from("recipes")
+        .select("id, nombre, instrucciones, es_preparacion, costo_porcion, precio_venta, costo_total, porciones")
+        .eq("user_id", user.id);
+      setRecetas(recipes || []);
+
+      const { data: ings } = await supabase
+        .from("recipe_ingredients")
+        .select("recipe_id, cantidad, unidad, costo, ingredients(nombre)")
+        .eq("user_id", user.id);
+
       const map: Record<string, Ing[]> = {};
-      ings?.forEach((i: any) => {
-        if (!map[i.recipe_id]) map[i.recipe_id] = [];
-        map[i.recipe_id].push({ nombre: i.ingredients?.nombre || "", cantidad: i.cantidad, unidad: i.unidad, costo: i.costo });
+      ings?.forEach((row: any) => {
+        const rid = row.recipe_id;
+        if (!map[rid]) map[rid] = [];
+        map[rid].push({
+          nombre: row.ingredients?.nombre || "Sin nombre",
+          cantidad: row.cantidad || 0,
+          unidad: row.unidad || "",
+          costo: row.costo || 0,
+        });
       });
       setIngredientes(map);
     };
@@ -39,7 +54,6 @@ export default function RecetarioPage() {
   }, []);
 
   const foodCost = (r: Recipe) => r.precio_venta && r.costo_total ? Math.round((r.costo_total / r.precio_venta) * 100) : 0;
-  const indirecto = (costo: number) => costo * 0.08;
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -48,9 +62,7 @@ export default function RecetarioPage() {
           aside, nav, header, button, .no-print { display: none !important; }
           body, html { margin: 0; padding: 0; background: white; }
           main { margin: 0; padding: 12mm; width: 100%; }
-          .ficha { page-break-inside: avoid; break-inside: avoid; }
-          table { page-break-inside: auto; }
-          tr { page-break-inside: avoid; }
+          .ficha { page-break-inside: avoid; }
         }
       `}</style>
 
@@ -70,8 +82,8 @@ export default function RecetarioPage() {
         {recetas.map((r) => {
           const ings = ingredientes[r.id] || [];
           const subtotal = ings.reduce((s, i) => s + (i.costo || 0), 0);
-          const ind = indirecto(subtotal);
-          const total = subtotal + ind;
+          const indirecto = subtotal * 0.08;
+          const total = subtotal + indirecto;
           return (
             <div key={r.id} className="ficha border border-stone-300 p-6 bg-white text-sm">
               <div className="flex justify-between border-b border-stone-300 pb-3 mb-4">
@@ -95,14 +107,18 @@ export default function RecetarioPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {ings.map((ing, i) => (
-                    <tr key={i} className="border-b border-stone-100">
-                      <td className="py-1">{ing.nombre}</td>
-                      <td className="text-right">{ing.cantidad}</td>
-                      <td className="text-right">{ing.unidad}</td>
-                      {vista === "costeo" && <td className="text-right">{ing.costo ? formatCOP(ing.costo) : "-"}</td>}
-                    </tr>
-                  ))}
+                  {ings.length === 0 ? (
+                    <tr><td colSpan={4} className="py-2 text-stone-400">Sin ingredientes</td></tr>
+                  ) : (
+                    ings.map((ing, i) => (
+                      <tr key={i} className="border-b border-stone-100">
+                        <td className="py-1">{ing.nombre}</td>
+                        <td className="text-right">{ing.cantidad}</td>
+                        <td className="text-right">{ing.unidad}</td>
+                        {vista === "costeo" && <td className="text-right">{formatCOP(ing.costo)}</td>}
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
 
@@ -110,13 +126,13 @@ export default function RecetarioPage() {
                 <div className="grid grid-cols-2 gap-4 text-xs border-t border-stone-300 pt-3">
                   <div>
                     <p>Subtotal materia prima: <span className="font-medium">{formatCOP(subtotal)}</span></p>
-                    <p>Costos indirectos (8%): <span className="font-medium">{formatCOP(ind)}</span></p>
+                    <p>Costos indirectos (8%): <span className="font-medium">{formatCOP(indirecto)}</span></p>
                     <p>Costo total: <span className="font-medium">{formatCOP(total)}</span></p>
                   </div>
                   <div className="text-right">
                     <p>Costo por porción: <span className="font-medium">{formatCOP(total / (r.porciones || 1))}</span></p>
-                    {r.precio_venta && <p>Precio venta: <span className="font-medium">{formatCOP(r.precio_venta)}</span></p>}
-                    {r.precio_venta && <p className="font-semibold">Food cost: {foodCost(r)}%</p>}
+                    {r.precio_venta ? <p>Precio venta: <span className="font-medium">{formatCOP(r.precio_venta)}</span></p> : null}
+                    {r.precio_venta ? <p className="font-semibold">Food cost: {foodCost(r)}%</p> : null}
                   </div>
                 </div>
               )}
