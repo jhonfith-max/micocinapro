@@ -84,14 +84,7 @@ export default function RecetarioPage() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <style>{`
-        @media print {
-          aside, nav, header, button, .no-print { display: none !important; }
-          body, html { margin: 0; padding: 0; background: white; }
-          main { margin: 0; padding: 12mm; width: 100%; }
-          .ficha { page-break-inside: avoid; }
-        }
-      `}</style>
+      <style>{`@media print { aside, nav, header, button, .no-print { display: none !important; } body, html { margin: 0; padding: 0; background: white; } main { margin: 0; padding: 12mm; width: 100%; } .ficha { page-break-inside: avoid; } }`}</style>
 
       <div className="no-print flex justify-between items-center mb-6">
         <div>
@@ -160,4 +153,30 @@ export default function RecetarioPage() {
               </table>
 
               {vista === "costeo" && (
-                <div className="grid grid-cols-2 gap-4 text-xs border-t 
+                <div className="grid grid-cols-2 gap-4 text-xs border-t border-stone-300 pt-3">
+                  <div>
+                    <p>Subtotal materia prima: <span className="font-medium">{formatCOP(subtotal)}</span></p>
+                    <p>Costos indirectos (8%): <span className="font-medium">{formatCOP(indirecto)}</span></p>
+                    <p>Costo total: <span className="font-medium">{formatCOP(total)}</span></p>
+                  </div>
+                  <div className="text-right">
+                    <p>Costo por porción: <span className="font-medium">{formatCOP(total / (r.porciones || 1))}</span></p>
+                    {r.precio_venta ? <p>Precio venta: <span className="font-medium">{formatCOP(r.precio_venta)}</span></p> : null}
+                    {r.precio_venta ? <p className="font-semibold">Food cost: {foodCost(r)}%</p> : null}
+                  </div>
+                </div>
+              )}
+
+              {r.instrucciones && (
+                <div className="mt-4 pt-3 border-t border-stone-200">
+                  <p className="text-xs font-medium text-stone-500 mb-1">Producción</p>
+                  <p className="text-xs text-stone-700 whitespace-pre-wrap">{r.instrucciones}</p>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
