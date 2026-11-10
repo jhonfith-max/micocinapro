@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { formatCOP } from "@/lib/utils";
 
-type Item = { id: string; nombre: string; instrucciones: string | null; es_preparacion: boolean };
-type Ing = { nombre: string; cantidad: number; unidad: string };
+type Item = { id: string; nombre: string; instrucciones: string | null; es_preparacion: boolean; costo_porcion?: number };
+type Ing = { nombre: string; cantidad: number; unidad: string; costo?: number };
 
 export default function RecetarioPage() {
   const [recetas, setRecetas] = useState<Item[]>([]);
@@ -15,13 +16,13 @@ export default function RecetarioPage() {
     const load = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const { data } = await supabase.from("recipes").select("id, nombre, instrucciones, es_preparacion").eq("user_id", user.id);
+      const { data } = await supabase.from("recipes").select("id, nombre, instrucciones, es_preparacion, costo_porcion").eq("user_id", user.id);
       setRecetas(data || []);
-      const { data: ings } = await supabase.from("recipe_ingredients").select("recipe_id, cantidad, unidad, ingredients(nombre)").eq("user_id", user.id);
+      const { data: ings } = await supabase.from("recipe_ingredients").select("recipe_id, cantidad, unidad, costo, ingredients(nombre)").eq("user_id", user.id);
       const map: Record<string, Ing[]> = {};
       ings?.forEach((i: any) => {
         if (!map[i.recipe_id]) map[i.recipe_id] = [];
-        map[i.recipe_id].push({ nombre: i.ingredients?.nombre || "", cantidad: i.cantidad, unidad: i.unidad });
+        map[i.recipe_id].push({ nombre: i.ingredients?.nombre || "", cantidad: i.cantidad, unidad: i.unidad, costo: i.costo });
       });
       setIngredientes(map);
     };
@@ -32,7 +33,7 @@ export default function RecetarioPage() {
     <div className="max-w-2xl">
       <style>{`
         @media print {
-          aside, nav, header, button { display: none !important; }
+          aside, nav, header, button, .print\\:hidden { display: none !important; }
           body, html { margin: 0 !important; }
           main { width: 100% !important; margin: 0 !important; padding: 16px !important; }
         }
@@ -41,11 +42,11 @@ export default function RecetarioPage() {
         <div>
           <p className="text-xs uppercase tracking-widest text-green-800">Para imprimir</p>
           <h1 className="text-2xl font-semibold mt-1">Recetario</h1>
-          <p className="text-sm text-stone-500">Cocina no ve precios. Tú sí.</p>
+          <p className="text-sm text-stone-500">{vista === "cocina" ? "Para la cocina. Sin precios." : "Para el dueño. Con costos."}</p>
         </div>
         <button onClick={() => window.print()} className="px-4 py-2 border border-stone-200 rounded-xl text-sm print:hidden">Imprimir</button>
       </div>
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2 mb-6 print:hidden">
         <button onClick={() => setVista("cocina")} className={`px-4 py-2 rounded-full text-sm ${vista === "cocina" ? "bg-green-800 text-white" : "bg-stone-100"}`}>Ficha de cocina</button>
         <button onClick={() => setVista("costeo")} className={`px-4 py-2 rounded-full text-sm ${vista === "costeo" ? "bg-green-800 text-white" : "bg-stone-100"}`}>Ficha de costeo</button>
       </div>
@@ -54,11 +55,17 @@ export default function RecetarioPage() {
           <div key={r.id} className="bg-white border border-stone-200 rounded-2xl p-5">
             <p className="text-xs uppercase tracking-widest text-stone-400">{r.es_preparacion ? "Sub-receta" : "Plato"}</p>
             <h2 className="font-semibold text-lg mt-1">{r.nombre}</h2>
+            {vista === "costeo" && r.costo_porcion && (
+              <p className="text-sm text-green-700 mt-1">Costo por porción: {formatCOP(r.costo_porcion)}</p>
+            )}
             <div className="mt-4 space-y-1">
               {ingredientes[r.id]?.map((ing, i) => (
                 <div key={i} className="flex justify-between text-sm py-1 border-b border-stone-50">
                   <span>{ing.nombre}</span>
-                  <span className="text-stone-500">{ing.cantidad} {ing.unidad}</span>
+                  <span className="text-stone-500">
+                    {ing.cantidad} {ing.unidad}
+                    {vista === "costeo" && ing.costo ? ` · ${formatCOP(ing.costo)}` : ""}
+                  </span>
                 </div>
               ))}
             </div>
