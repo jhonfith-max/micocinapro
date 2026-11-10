@@ -38,16 +38,18 @@ export default function RecetarioPage() {
         .eq("user_id", user.id);
 
       const map: Record<string, Ing[]> = {};
-      ings?.forEach((row: any) => {
-        const rid = row.recipe_id;
-        if (!map[rid]) map[rid] = [];
-        map[rid].push({
-          nombre: row.ingredients?.nombre || "Sin nombre",
-          cantidad: row.cantidad || 0,
-          unidad: row.unidad || "",
-          costo: row.costo || 0,
+      if (ings) {
+        ings.forEach((row: any) => {
+          const rid = row.recipe_id;
+          if (!map[rid]) map[rid] = [];
+          map[rid].push({
+            nombre: row.ingredients?.nombre || "Ingrediente",
+            cantidad: Number(row.cantidad) || 0,
+            unidad: row.unidad || "",
+            costo: Number(row.costo) || 0,
+          });
         });
-      });
+      }
       setIngredientes(map);
     };
     load();
