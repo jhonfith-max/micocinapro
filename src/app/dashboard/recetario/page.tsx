@@ -14,7 +14,7 @@ type Recipe = {
   costo_total?: number;
   porciones?: number;
 };
-type Ing = { nombre: string; cantidad: number; unidad: string; costo: number };
+type Ing = { nombre: string; cantidad: number; unidad: string; costo: number; merma: number };
 type Sub = { nombre: string; cantidad: number; costo: number };
 
 export default function RecetarioPage() {
@@ -40,19 +40,31 @@ export default function RecetarioPage() {
 
       const { data: ings } = await supabase
         .from("recipe_ingredients")
-        .select("recipe_id, cantidad, unidad, costo, ingredients(nombre)")
+        .select("recipe_id, cantidad, unidad, costo, ingredient_id, ingredients(nombre)")
         .in("recipe_id", ids);
+
+      const { data: yields } = await supabase
+        .from("yield_tests")
+        .select("ingredient_id, porcentaje_rendimiento")
+        .eq("user_id", user.id);
+
+      const yieldMap: Record<string, number> = {};
+      yields?.forEach((y: any) => {
+        yieldMap[y.ingredient_id] = y.porcentaje_rendimiento || 0;
+      });
 
       const mapIng: Record<string, Ing[]> = {};
       if (ings) {
         ings.forEach((row: any) => {
           const rid = row.recipe_id;
           if (!mapIng[rid]) mapIng[rid] = [];
+          const merma = yieldMap[row.ingredient_id] ? 100 - yieldMap[row.ingredient_id] : 0;
           mapIng[rid].push({
             nombre: row.ingredients?.nombre || "Ingrediente",
             cantidad: Number(row.cantidad) || 0,
             unidad: row.unidad || "",
             costo: Number(row.costo) || 0,
+            merma,
           });
         });
       }
@@ -126,6 +138,7 @@ export default function RecetarioPage() {
                     <th className="text-left py-1">Ingrediente / Subreceta</th>
                     <th className="text-right">Cantidad</th>
                     <th className="text-right">Unidad</th>
+                    <th className="text-right">Merma</th>
                     {vista === "costeo" && <th className="text-right">Costo</th>}
                   </tr>
                 </thead>
@@ -135,6 +148,7 @@ export default function RecetarioPage() {
                       <td className="py-1">{ing.nombre}</td>
                       <td className="text-right">{ing.cantidad}</td>
                       <td className="text-right">{ing.unidad}</td>
+                      <td className="text-right">{ing.merma > 0 ? ing.merma + "%" : "-"}</td>
                       {vista === "costeo" && <td className="text-right">{formatCOP(ing.costo)}</td>}
                     </tr>
                   ))}
@@ -143,11 +157,12 @@ export default function RecetarioPage() {
                       <td className="py-1">{sub.nombre}</td>
                       <td className="text-right">{sub.cantidad}</td>
                       <td className="text-right">porción</td>
+                      <td className="text-right">-</td>
                       {vista === "costeo" && <td className="text-right">{formatCOP(sub.costo)}</td>}
                     </tr>
                   ))}
                   {ings.length === 0 && subs.length === 0 && (
-                    <tr><td colSpan={4} className="py-2 text-stone-400">Sin ingredientes</td></tr>
+                    <tr><td colSpan={5} className="py-2 text-stone-400">Sin ingredientes</td></tr>
                   )}
                 </tbody>
               </table>
