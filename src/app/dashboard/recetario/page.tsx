@@ -32,10 +32,13 @@ export default function RecetarioPage() {
         .eq("user_id", user.id);
       setRecetas(recipes || []);
 
+      if (!recipes || recipes.length === 0) return;
+
+      const ids = recipes.map((r) => r.id);
       const { data: ings } = await supabase
         .from("recipe_ingredients")
         .select("recipe_id, cantidad, unidad, costo, ingredients(nombre)")
-        .eq("user_id", user.id);
+        .in("recipe_id", ids);
 
       const map: Record<string, Ing[]> = {};
       if (ings) {
