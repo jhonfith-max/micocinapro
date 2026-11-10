@@ -130,6 +130,7 @@ export default function RecetarioPage() {
         {recetas.map((r) => {
           const ings = ingredientes[r.id] || [];
           const subs = subrecetas[r.id] || [];
+          const pesoNeta = ings.reduce((s, i) => s + i.cantidad, 0);
           const subtotalIng = ings.reduce((s, i) => s + (i.costo || 0), 0);
           const subtotalSub = subs.reduce((s, i) => s + (i.costo || 0), 0);
           const subtotal = subtotalIng + subtotalSub;
@@ -145,7 +146,7 @@ export default function RecetarioPage() {
                 <div className="text-right text-xs text-stone-500">
                   <p>Código: {r.id.slice(0, 8).toUpperCase()}</p>
                   <p>Porciones: {r.porciones || 1}</p>
-                  {r.peso_porcion && <p>Peso porción: {r.peso_porcion} g</p>}
+                  <p>Peso final aprox.: {pesoNeta} g</p>
                 </div>
               </div>
 
@@ -215,7 +216,7 @@ export default function RecetarioPage() {
               {(r.alergenos || r.pcc) && (
                 <div className="mt-3 text-xs text-stone-600 space-y-1">
                   {r.alergenos && <p><span className="font-medium">Alérgenos:</span> {r.alergenos}</p>}
-                  {r.pcc && <p><span className="font-medium">PCC:</span> {r.pcc}</p>}
+                  {r.pcc && <p><span className="font-medium">Puntos Críticos (PCC):</span> {r.pcc}</p>}
                 </div>
               )}
             </div>
