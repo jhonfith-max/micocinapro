@@ -1,11 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { formatCOP } from "@/lib/utils";
+
+type Ingredient = { id: string; nombre: string; precio_por_unidad: number };
+type PrepRecipe = { id: string; nombre: string; costo_porcion: number };
+type RecipeItem = { ingredient_id: string; nombre: string; cantidad: number; unidad: string; costo: number };
+type PrepItem = { component_recipe_id: string; nombre: string; cantidad: number; costo: number };
 
 export default function NuevaRecetaPage() {
   const router = useRouter();
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [preps, setPreps] = useState<PrepRecipe[]>([]);
+  const [items, setItems] = useState<RecipeItem[]>([]);
+  const [prepItems, setPrepItems] = useState<PrepItem[]>([]);
   const [form, setForm] = useState({
     nombre: "",
     instrucciones: "",
@@ -14,14 +24,60 @@ export default function NuevaRecetaPage() {
     precio_venta: "",
     peso_porcion: "",
   });
+  const [busqueda, setBusqueda] = useState("");
+  const [seleccionado, setSeleccionado] = useState<Ingredient | null>(null);
+  const [cantidad, setCantidad] = useState("");
+  const [unidad, setUnidad] = useState("g");
+  const [busquedaPrep, setBusquedaPrep] = useState("");
+  const [seleccionadoPrep, setSeleccionadoPrep] = useState<PrepRecipe | null>(null);
+  const [cantidadPrep, setCantidadPrep] = useState("1");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: ings } = await supabase.from("ingredients").select("id, nombre, precio_por_unidad").eq("user_id", user.id);
+      setIngredients(ings || []);
+      const { data: pr } = await supabase.from("recipes").select("id, nombre, costo_porcion").eq("user_id", user.id).eq("es_preparacion", true);
+      setPreps(pr || []);
+    };
+    load();
+  }, []);
+
+  const filtrados = ingredients.filter((i) => i.nombre.toLowerCase().includes(busqueda.toLowerCase()));
+  const filtradosPrep = preps.filter((p) => p.nombre.toLowerCase().includes(busquedaPrep.toLowerCase()));
+
+  const costoIngredientes = items.reduce((s, i) => s + i.costo, 0);
+  const costoPreps = prepItems.reduce((s, i) => s + i.costo, 0);
+  const costoTotal = costoIngredientes + costoPreps;
+  const foodCost = form.precio_venta ? Math.round((costoTotal / Number(form.precio_venta)) * 100) : 0;
+
+  const agregarIng = () => {
+    if (!seleccionado || !cantidad) return;
+    const factor = unidad === "g" || unidad === "ml" ? 1000 : 1;
+    const costo = (Number(cantidad) * seleccionado.precio_por_unidad) / factor;
+    setItems([...items, { ingredient_id: seleccionado.id, nombre: seleccionado.nombre, cantidad: Number(cantidad), unidad, costo }]);
+    setSeleccionado(null);
+    setCantidad("");
+    setBusqueda("");
+  };
+
+  const agregarPrep = () => {
+    if (!seleccionadoPrep) return;
+    const costo = seleccionadoPrep.costo_porcion * Number(cantidadPrep);
+    setPrepItems([...prepItems, { component_recipe_id: seleccionadoPrep.id, nombre: seleccionadoPrep.nombre, cantidad: Number(cantidadPrep), costo }]);
+    setSeleccionadoPrep(null);
+    setCantidadPrep("1");
+    setBusquedaPrep("");
+  };
 
   const guardar = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    await supabase.from("recipes").insert({
+    const { data: rec } = await supabase.from("recipes").insert({
       user_id: user.id,
       nombre: form.nombre,
       instrucciones: form.instrucciones,
@@ -29,8 +85,27 @@ export default function NuevaRecetaPage() {
       pcc: form.pcc,
       precio_venta: form.precio_venta ? Number(form.precio_venta) : null,
       peso_porcion: form.peso_porcion ? Number(form.peso_porcion) : null,
+      costo_total: costoTotal,
+      costo_porcion: costoTotal,
       es_preparacion: false,
-    });
+    }).select().single();
+    if (rec && items.length) {
+      await supabase.from("recipe_ingredients").insert(items.map((i) => ({
+        recipe_id: rec.id,
+        ingredient_id: i.ingredient_id,
+        cantidad: i.cantidad,
+        unidad: i.unidad,
+        costo: i.costo,
+      })));
+    }
+    if (rec && prepItems.length) {
+      await supabase.from("recipe_components").insert(prepItems.map((p) => ({
+        recipe_id: rec.id,
+        component_recipe_id: p.component_recipe_id,
+        cantidad: p.cantidad,
+        costo: p.costo,
+      })));
+    }
     setLoading(false);
     router.push("/dashboard/recetas");
   };
@@ -50,6 +125,62 @@ export default function NuevaRecetaPage() {
         <div>
           <label className="block text-sm text-stone-600 mb-1">Peso final aproximado (g)</label>
           <input type="number" value={form.peso_porcion} onChange={(e) => setForm({ ...form, peso_porcion: e.target.value })} className="w-full px-4 py-2.5 border rounded-lg" />
+        </div>
+        <div>
+          <label className="block text-sm text-stone-600 mb-1">Agregar ingrediente</label>
+          <input value={busqueda} onChange={(e) => setBusqueda(e.target.value)} placeholder="Buscar ingrediente..." className="w-full px-4 py-2.5 border rounded-lg" />
+          {busqueda && filtrados.length > 0 && (
+            <div className="border rounded-lg mt-1 max-h-40 overflow-auto">
+              {filtrados.map((i) => (
+                <button type="button" key={i.id} onClick={() => { setSeleccionado(i); setBusqueda(i.nombre); }} className="block w-full text-left px-3 py-2 hover:bg-stone-50 text-sm">{i.nombre}</button>
+              ))}
+            </div>
+          )}
+          {seleccionado && (
+            <div className="flex gap-2 mt-2">
+              <input type="number" value={cantidad} onChange={(e) => setCantidad(e.target.value)} placeholder="Cantidad" className="flex-1 px-3 py-2 border rounded-lg" />
+              <select value={unidad} onChange={(e) => setUnidad(e.target.value)} className="px-3 py-2 border rounded-lg">
+                <option value="g">g</option>
+                <option value="ml">ml</option>
+                <option value="unidad">unidad</option>
+              </select>
+              <button type="button" onClick={agregarIng} className="px-4 py-2 bg-green-800 text-white rounded-lg text-sm">Agregar</button>
+            </div>
+          )}
+        </div>
+        <div>
+          <label className="block text-sm text-stone-600 mb-1">Agregar subreceta</label>
+          <input value={busquedaPrep} onChange={(e) => setBusquedaPrep(e.target.value)} placeholder="Buscar subreceta..." className="w-full px-4 py-2.5 border rounded-lg" />
+          {busquedaPrep && filtradosPrep.length > 0 && (
+            <div className="border rounded-lg mt-1 max-h-40 overflow-auto">
+              {filtradosPrep.map((p) => (
+                <button type="button" key={p.id} onClick={() => { setSeleccionadoPrep(p); setBusquedaPrep(p.nombre); }} className="block w-full text-left px-3 py-2 hover:bg-stone-50 text-sm">{p.nombre}</button>
+              ))}
+            </div>
+          )}
+          {seleccionadoPrep && (
+            <div className="flex gap-2 mt-2">
+              <input type="number" value={cantidadPrep} onChange={(e) => setCantidadPrep(e.target.value)} placeholder="Porciones" className="flex-1 px-3 py-2 border rounded-lg" />
+              <button type="button" onClick={agregarPrep} className="px-4 py-2 bg-green-800 text-white rounded-lg text-sm">Agregar</button>
+            </div>
+          )}
+        </div>
+        <div>
+          <label className="block text-sm text-stone-600 mb-1">Ingredientes y subrecetas</label>
+          {items.map((item, i) => (
+            <div key={"i" + i} className="flex justify-between py-1 text-sm border-b">
+              <span>{item.nombre}: {item.cantidad} {item.unidad}</span>
+              <span>{formatCOP(item.costo)}</span>
+            </div>
+          ))}
+          {prepItems.map((item, i) => (
+            <div key={"p" + i} className="flex justify-between py-1 text-sm border-b">
+              <span>{item.nombre}: {item.cantidad} porción</span>
+              <span>{formatCOP(item.costo)}</span>
+            </div>
+          ))}
+          <p className="mt-2 text-sm font-medium">Costo total: {formatCOP(costoTotal)}</p>
+          {form.precio_venta && <p className="text-sm">Food cost: {foodCost}%</p>}
         </div>
         <div>
           <label className="block text-sm text-stone-600 mb-1">Instrucciones</label>
