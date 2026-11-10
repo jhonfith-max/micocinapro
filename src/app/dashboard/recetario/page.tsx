@@ -13,6 +13,9 @@ type Recipe = {
   precio_venta?: number;
   costo_total?: number;
   porciones?: number;
+  alergenos?: string | null;
+  pcc?: string | null;
+  peso_porcion?: number | null;
 };
 type Ing = { nombre: string; cantidad: number; unidad: string; costo: number; merma: number };
 type Sub = { nombre: string; cantidad: number; costo: number };
@@ -30,7 +33,7 @@ export default function RecetarioPage() {
 
       const { data: recipes } = await supabase
         .from("recipes")
-        .select("id, nombre, instrucciones, es_preparacion, costo_porcion, precio_venta, costo_total, porciones")
+        .select("id, nombre, instrucciones, es_preparacion, costo_porcion, precio_venta, costo_total, porciones, alergenos, pcc, peso_porcion")
         .eq("user_id", user.id);
       setRecetas(recipes || []);
 
@@ -77,21 +80,26 @@ export default function RecetarioPage() {
 
       const subIds = subs?.map((s: any) => s.component_recipe_id).filter(Boolean) || [];
       const { data: subRecipes } = subIds.length
-        ? await supabase.from("recipes").select("id, nombre").in("id", subIds)
+        ? await supabase.from("recipes").select("id, nombre, costo_porcion").in("id", subIds)
         : { data: [] };
 
       const subNameMap: Record<string, string> = {};
-      subRecipes?.forEach((s: any) => { subNameMap[s.id] = s.nombre; });
+      const subCostoMap: Record<string, number> = {};
+      subRecipes?.forEach((s: any) => {
+        subNameMap[s.id] = s.nombre;
+        subCostoMap[s.id] = s.costo_porcion || 0;
+      });
 
       const mapSub: Record<string, Sub[]> = {};
       if (subs) {
         subs.forEach((row: any) => {
           const rid = row.recipe_id;
           if (!mapSub[rid]) mapSub[rid] = [];
+          const costoFinal = (subCostoMap[row.component_recipe_id] || 0) * 1.08;
           mapSub[rid].push({
             nombre: subNameMap[row.component_recipe_id] || "Subreceta",
             cantidad: Number(row.cantidad) || 0,
-            costo: Number(row.costo) || 0,
+            costo: costoFinal,
           });
         });
       }
@@ -137,6 +145,7 @@ export default function RecetarioPage() {
                 <div className="text-right text-xs text-stone-500">
                   <p>Código: {r.id.slice(0, 8).toUpperCase()}</p>
                   <p>Porciones: {r.porciones || 1}</p>
+                  {r.peso_porcion && <p>Peso porción: {r.peso_porcion} g</p>}
                 </div>
               </div>
 
@@ -144,33 +153,39 @@ export default function RecetarioPage() {
                 <thead>
                   <tr className="border-b border-stone-300 text-stone-500">
                     <th className="text-left py-1">Ingrediente / Subreceta</th>
-                    <th className="text-right">Cantidad</th>
+                    <th className="text-right">Cant. Neta</th>
                     <th className="text-right">Unidad</th>
                     <th className="text-right">Merma</th>
+                    <th className="text-right">Cant. Bruta</th>
                     {vista === "costeo" && <th className="text-right">Costo</th>}
                   </tr>
                 </thead>
                 <tbody>
-                  {ings.map((ing, i) => (
-                    <tr key={"i" + i} className="border-b border-stone-100">
-                      <td className="py-1">{ing.nombre}</td>
-                      <td className="text-right">{ing.cantidad}</td>
-                      <td className="text-right">{ing.unidad}</td>
-                      <td className="text-right">{ing.merma > 0 ? ing.merma + "%" : "-"}</td>
-                      {vista === "costeo" && <td className="text-right">{formatCOP(ing.costo)}</td>}
-                    </tr>
-                  ))}
+                  {ings.map((ing, i) => {
+                    const bruta = ing.merma > 0 ? Math.round(ing.cantidad / (1 - ing.merma / 100)) : ing.cantidad;
+                    return (
+                      <tr key={"i" + i} className="border-b border-stone-100">
+                        <td className="py-1">{ing.nombre}</td>
+                        <td className="text-right">{ing.cantidad}</td>
+                        <td className="text-right">{ing.unidad}</td>
+                        <td className="text-right">{ing.merma > 0 ? ing.merma + "%" : "-"}</td>
+                        <td className="text-right">{bruta}</td>
+                        {vista === "costeo" && <td className="text-right">{formatCOP(ing.costo)}</td>}
+                      </tr>
+                    );
+                  })}
                   {subs.map((sub, i) => (
                     <tr key={"s" + i} className="border-b border-stone-100">
                       <td className="py-1">{sub.nombre}</td>
                       <td className="text-right">{sub.cantidad}</td>
                       <td className="text-right">porción</td>
                       <td className="text-right">-</td>
+                      <td className="text-right">-</td>
                       {vista === "costeo" && <td className="text-right">{formatCOP(sub.costo)}</td>}
                     </tr>
                   ))}
                   {ings.length === 0 && subs.length === 0 && (
-                    <tr><td colSpan={5} className="py-2 text-stone-400">Sin ingredientes</td></tr>
+                    <tr><td colSpan={6} className="py-2 text-stone-400">Sin ingredientes</td></tr>
                   )}
                 </tbody>
               </table>
@@ -194,6 +209,13 @@ export default function RecetarioPage() {
                 <div className="mt-4 pt-3 border-t border-stone-200">
                   <p className="text-xs font-medium text-stone-500 mb-1">Producción</p>
                   <p className="text-xs text-stone-700 whitespace-pre-wrap">{r.instrucciones}</p>
+                </div>
+              )}
+
+              {(r.alergenos || r.pcc) && (
+                <div className="mt-3 text-xs text-stone-600 space-y-1">
+                  {r.alergenos && <p><span className="font-medium">Alérgenos:</span> {r.alergenos}</p>}
+                  {r.pcc && <p><span className="font-medium">PCC:</span> {r.pcc}</p>}
                 </div>
               )}
             </div>
