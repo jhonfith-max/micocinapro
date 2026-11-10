@@ -15,10 +15,12 @@ type Recipe = {
   porciones?: number;
 };
 type Ing = { nombre: string; cantidad: number; unidad: string; costo: number };
+type Sub = { nombre: string; cantidad: number; costo: number };
 
 export default function RecetarioPage() {
   const [recetas, setRecetas] = useState<Recipe[]>([]);
   const [ingredientes, setIngredientes] = useState<Record<string, Ing[]>>({});
+  const [subrecetas, setSubrecetas] = useState<Record<string, Sub[]>>({});
   const [vista, setVista] = useState<"cocina" | "costeo">("cocina");
 
   useEffect(() => {
@@ -35,17 +37,18 @@ export default function RecetarioPage() {
       if (!recipes || recipes.length === 0) return;
 
       const ids = recipes.map((r) => r.id);
+
       const { data: ings } = await supabase
         .from("recipe_ingredients")
         .select("recipe_id, cantidad, unidad, costo, ingredients(nombre)")
         .in("recipe_id", ids);
 
-      const map: Record<string, Ing[]> = {};
+      const mapIng: Record<string, Ing[]> = {};
       if (ings) {
         ings.forEach((row: any) => {
           const rid = row.recipe_id;
-          if (!map[rid]) map[rid] = [];
-          map[rid].push({
+          if (!mapIng[rid]) mapIng[rid] = [];
+          mapIng[rid].push({
             nombre: row.ingredients?.nombre || "Ingrediente",
             cantidad: Number(row.cantidad) || 0,
             unidad: row.unidad || "",
@@ -53,7 +56,26 @@ export default function RecetarioPage() {
           });
         });
       }
-      setIngredientes(map);
+      setIngredientes(mapIng);
+
+      const { data: subs } = await supabase
+        .from("recipe_components")
+        .select("recipe_id, cantidad, costo, recipes(nombre)")
+        .in("recipe_id", ids);
+
+      const mapSub: Record<string, Sub[]> = {};
+      if (subs) {
+        subs.forEach((row: any) => {
+          const rid = row.recipe_id;
+          if (!mapSub[rid]) mapSub[rid] = [];
+          mapSub[rid].push({
+            nombre: row.recipes?.nombre || "Subreceta",
+            cantidad: Number(row.cantidad) || 0,
+            costo: Number(row.costo) || 0,
+          });
+        });
+      }
+      setSubrecetas(mapSub);
     };
     load();
   }, []);
@@ -86,7 +108,10 @@ export default function RecetarioPage() {
       <div className="space-y-8">
         {recetas.map((r) => {
           const ings = ingredientes[r.id] || [];
-          const subtotal = ings.reduce((s, i) => s + (i.costo || 0), 0);
+          const subs = subrecetas[r.id] || [];
+          const subtotalIng = ings.reduce((s, i) => s + (i.costo || 0), 0);
+          const subtotalSub = subs.reduce((s, i) => s + (i.costo || 0), 0);
+          const subtotal = subtotalIng + subtotalSub;
           const indirecto = subtotal * 0.08;
           const total = subtotal + indirecto;
           return (
@@ -105,53 +130,34 @@ export default function RecetarioPage() {
               <table className="w-full text-xs mb-4">
                 <thead>
                   <tr className="border-b border-stone-300 text-stone-500">
-                    <th className="text-left py-1">Ingrediente</th>
+                    <th className="text-left py-1">Ingrediente / Subreceta</th>
                     <th className="text-right">Cantidad</th>
                     <th className="text-right">Unidad</th>
                     {vista === "costeo" && <th className="text-right">Costo</th>}
                   </tr>
                 </thead>
                 <tbody>
-                  {ings.length === 0 ? (
+                  {ings.map((ing, i) => (
+                    <tr key={"i" + i} className="border-b border-stone-100">
+                      <td className="py-1">{ing.nombre}</td>
+                      <td className="text-right">{ing.cantidad}</td>
+                      <td className="text-right">{ing.unidad}</td>
+                      {vista === "costeo" && <td className="text-right">{formatCOP(ing.costo)}</td>}
+                    </tr>
+                  ))}
+                  {subs.map((sub, i) => (
+                    <tr key={"s" + i} className="border-b border-stone-100">
+                      <td className="py-1">{sub.nombre}</td>
+                      <td className="text-right">{sub.cantidad}</td>
+                      <td className="text-right">porción</td>
+                      {vista === "costeo" && <td className="text-right">{formatCOP(sub.costo)}</td>}
+                    </tr>
+                  ))}
+                  {ings.length === 0 && subs.length === 0 && (
                     <tr><td colSpan={4} className="py-2 text-stone-400">Sin ingredientes</td></tr>
-                  ) : (
-                    ings.map((ing, i) => (
-                      <tr key={i} className="border-b border-stone-100">
-                        <td className="py-1">{ing.nombre}</td>
-                        <td className="text-right">{ing.cantidad}</td>
-                        <td className="text-right">{ing.unidad}</td>
-                        {vista === "costeo" && <td className="text-right">{formatCOP(ing.costo)}</td>}
-                      </tr>
-                    ))
                   )}
                 </tbody>
               </table>
 
               {vista === "costeo" && (
-                <div className="grid grid-cols-2 gap-4 text-xs border-t border-stone-300 pt-3">
-                  <div>
-                    <p>Subtotal materia prima: <span className="font-medium">{formatCOP(subtotal)}</span></p>
-                    <p>Costos indirectos (8%): <span className="font-medium">{formatCOP(indirecto)}</span></p>
-                    <p>Costo total: <span className="font-medium">{formatCOP(total)}</span></p>
-                  </div>
-                  <div className="text-right">
-                    <p>Costo por porción: <span className="font-medium">{formatCOP(total / (r.porciones || 1))}</span></p>
-                    {r.precio_venta ? <p>Precio venta: <span className="font-medium">{formatCOP(r.precio_venta)}</span></p> : null}
-                    {r.precio_venta ? <p className="font-semibold">Food cost: {foodCost(r)}%</p> : null}
-                  </div>
-                </div>
-              )}
-
-              {r.instrucciones && (
-                <div className="mt-4 pt-3 border-t border-stone-200">
-                  <p className="text-xs font-medium text-stone-500 mb-1">Producción</p>
-                  <p className="text-xs text-stone-700 whitespace-pre-wrap">{r.instrucciones}</p>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+                <div className="grid grid-cols-2 gap-4 text-xs border-t 
