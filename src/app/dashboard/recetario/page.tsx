@@ -4,7 +4,15 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatCOP } from "@/lib/utils";
 
-type Item = { id: string; nombre: string; instrucciones: string | null; es_preparacion: boolean; costo_porcion?: number };
+type Item = {
+  id: string;
+  nombre: string;
+  instrucciones: string | null;
+  es_preparacion: boolean;
+  costo_porcion?: number;
+  precio_venta?: number;
+  costo_total?: number;
+};
 type Ing = { nombre: string; cantidad: number; unidad: string; costo?: number };
 
 export default function RecetarioPage() {
@@ -16,7 +24,7 @@ export default function RecetarioPage() {
     const load = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const { data } = await supabase.from("recipes").select("id, nombre, instrucciones, es_preparacion, costo_porcion").eq("user_id", user.id);
+      const { data } = await supabase.from("recipes").select("id, nombre, instrucciones, es_preparacion, costo_porcion, precio_venta, costo_total").eq("user_id", user.id);
       setRecetas(data || []);
       const { data: ings } = await supabase.from("recipe_ingredients").select("recipe_id, cantidad, unidad, costo, ingredients(nombre)").eq("user_id", user.id);
       const map: Record<string, Ing[]> = {};
@@ -28,6 +36,11 @@ export default function RecetarioPage() {
     };
     load();
   }, []);
+
+  const foodCost = (r: Item) => {
+    if (!r.precio_venta || !r.costo_total) return 0;
+    return Math.round((r.costo_total / r.precio_venta) * 100);
+  };
 
   return (
     <div className="max-w-2xl">
@@ -55,8 +68,13 @@ export default function RecetarioPage() {
           <div key={r.id} className="bg-white border border-stone-200 rounded-2xl p-5">
             <p className="text-xs uppercase tracking-widest text-stone-400">{r.es_preparacion ? "Sub-receta" : "Plato"}</p>
             <h2 className="font-semibold text-lg mt-1">{r.nombre}</h2>
-            {vista === "costeo" && r.costo_porcion && (
-              <p className="text-sm text-green-700 mt-1">Costo por porción: {formatCOP(r.costo_porcion)}</p>
+            {vista === "costeo" && (
+              <div className="mt-3 text-sm space-y-1">
+                {r.costo_total && <p>Costo total: <span className="font-medium">{formatCOP(r.costo_total)}</span></p>}
+                {r.precio_venta && <p>Precio de venta: <span className="font-medium">{formatCOP(r.precio_venta)}</span></p>}
+                {r.precio_venta && r.costo_total && <p>Food cost: <span className="font-medium">{foodCost(r)}%</span></p>}
+                {r.costo_total && <p>Margen de error (10%): <span className="font-medium">{formatCOP(r.costo_total * 0.1)}</span></p>}
+              </div>
             )}
             <div className="mt-4 space-y-1">
               {ingredientes[r.id]?.map((ing, i) => (
