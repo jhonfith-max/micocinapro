@@ -11,6 +11,7 @@ export default function NuevaSubrecetaPage() {
     instrucciones: "",
     alergenos: "",
     pcc: "",
+    peso_porcion: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -25,6 +26,7 @@ export default function NuevaSubrecetaPage() {
       instrucciones: form.instrucciones,
       alergenos: form.alergenos,
       pcc: form.pcc,
+      peso_porcion: form.peso_porcion ? Number(form.peso_porcion) : null,
       es_preparacion: true,
     });
     setLoading(false);
@@ -38,6 +40,10 @@ export default function NuevaSubrecetaPage() {
         <div>
           <label className="block text-sm text-stone-600 mb-1">Nombre</label>
           <input required value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} className="w-full px-4 py-2.5 border rounded-lg" />
+        </div>
+        <div>
+          <label className="block text-sm text-stone-600 mb-1">Peso final aproximado (g)</label>
+          <input type="number" value={form.peso_porcion} onChange={(e) => setForm({ ...form, peso_porcion: e.target.value })} className="w-full px-4 py-2.5 border rounded-lg" />
         </div>
         <div>
           <label className="block text-sm text-stone-600 mb-1">Instrucciones</label>
