@@ -23,6 +23,7 @@ export default function NuevaRecetaPage() {
     pcc: "",
     precio_venta: "",
     peso_porcion: "",
+    porciones: "1",
   });
   const [busqueda, setBusqueda] = useState("");
   const [seleccionado, setSeleccionado] = useState<Ingredient | null>(null);
@@ -72,6 +73,9 @@ export default function NuevaRecetaPage() {
     setBusquedaPrep("");
   };
 
+  const quitarIng = (index: number) => setItems(items.filter((_, i) => i !== index));
+  const quitarPrep = (index: number) => setPrepItems(prepItems.filter((_, i) => i !== index));
+
   const guardar = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -85,8 +89,9 @@ export default function NuevaRecetaPage() {
       pcc: form.pcc,
       precio_venta: form.precio_venta ? Number(form.precio_venta) : null,
       peso_porcion: form.peso_porcion ? Number(form.peso_porcion) : null,
+      porciones: Number(form.porciones) || 1,
       costo_total: costoTotal,
-      costo_porcion: costoTotal,
+      costo_porcion: costoTotal / (Number(form.porciones) || 1),
       es_preparacion: false,
     }).select().single();
     if (rec && items.length) {
@@ -117,6 +122,10 @@ export default function NuevaRecetaPage() {
         <div>
           <label className="block text-sm text-stone-600 mb-1">Nombre</label>
           <input required value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} className="w-full px-4 py-2.5 border rounded-lg" />
+        </div>
+        <div>
+          <label className="block text-sm text-stone-600 mb-1">Porciones</label>
+          <input type="number" value={form.porciones} onChange={(e) => setForm({ ...form, porciones: e.target.value })} className="w-full px-4 py-2.5 border rounded-lg" />
         </div>
         <div>
           <label className="block text-sm text-stone-600 mb-1">Precio de venta</label>
@@ -168,15 +177,21 @@ export default function NuevaRecetaPage() {
         <div>
           <label className="block text-sm text-stone-600 mb-1">Ingredientes y subrecetas</label>
           {items.map((item, i) => (
-            <div key={"i" + i} className="flex justify-between py-1 text-sm border-b">
+            <div key={"i" + i} className="flex justify-between items-center py-1 text-sm border-b">
               <span>{item.nombre}: {item.cantidad} {item.unidad}</span>
-              <span>{formatCOP(item.costo)}</span>
+              <div className="flex items-center gap-2">
+                <span>{formatCOP(item.costo)}</span>
+                <button type="button" onClick={() => quitarIng(i)} className="text-stone-400">×</button>
+              </div>
             </div>
           ))}
           {prepItems.map((item, i) => (
-            <div key={"p" + i} className="flex justify-between py-1 text-sm border-b">
+            <div key={"p" + i} className="flex justify-between items-center py-1 text-sm border-b">
               <span>{item.nombre}: {item.cantidad} porción</span>
-              <span>{formatCOP(item.costo)}</span>
+              <div className="flex items-center gap-2">
+                <span>{formatCOP(item.costo)}</span>
+                <button type="button" onClick={() => quitarPrep(i)} className="text-stone-400">×</button>
+              </div>
             </div>
           ))}
           <p className="mt-2 text-sm font-medium">Costo total: {formatCOP(costoTotal)}</p>
