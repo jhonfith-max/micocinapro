@@ -16,6 +16,7 @@ type Recipe = {
   alergenos?: string | null;
   pcc?: string | null;
   peso_porcion?: number | null;
+  foto?: string | null;
 };
 type Ing = { nombre: string; cantidad: number; unidad: string; costo: number; merma: number };
 type Sub = { nombre: string; cantidad: number; costo: number };
@@ -33,7 +34,7 @@ export default function RecetarioPage() {
 
       const { data: recipes } = await supabase
         .from("recipes")
-        .select("id, nombre, instrucciones, es_preparacion, costo_porcion, precio_venta, costo_total, porciones, alergenos, pcc, peso_porcion")
+        .select("id, nombre, instrucciones, es_preparacion, costo_porcion, precio_venta, costo_total, porciones, alergenos, pcc, peso_porcion, foto")
         .eq("user_id", user.id);
       setRecetas(recipes || []);
 
@@ -75,7 +76,7 @@ export default function RecetarioPage() {
 
       const { data: subs } = await supabase
         .from("recipe_components")
-        .select("recipe_id, cantidad, costo, component_recipe_id")
+        .select("recipe_id, cantidad, component_recipe_id")
         .in("recipe_id", ids);
 
       const subIds = subs?.map((s: any) => s.component_recipe_id).filter(Boolean) || [];
@@ -95,7 +96,8 @@ export default function RecetarioPage() {
         subs.forEach((row: any) => {
           const rid = row.recipe_id;
           if (!mapSub[rid]) mapSub[rid] = [];
-          const costoFinal = (subCostoMap[row.component_recipe_id] || 0) * 1.08;
+          const costoActual = (subCostoMap[row.component_recipe_id] || 0) * (Number(row.cantidad) || 1);
+          const costoFinal = costoActual * 1.08;
           mapSub[rid].push({
             nombre: subNameMap[row.component_recipe_id] || "Subreceta",
             cantidad: Number(row.cantidad) || 0,
@@ -138,6 +140,7 @@ export default function RecetarioPage() {
           const total = subtotal + indirecto;
           return (
             <div key={r.id} className="ficha border border-stone-300 p-6 bg-white text-sm">
+              {r.foto && <img src={r.foto} alt="" className="w-full max-h-48 object-cover rounded mb-4" />}
               <div className="flex justify-between border-b border-stone-300 pb-3 mb-4">
                 <div>
                   <p className="text-xs text-stone-500">{r.es_preparacion ? "SUB-RECETA" : "PLATO"}</p>
