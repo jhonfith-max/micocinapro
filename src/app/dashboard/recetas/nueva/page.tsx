@@ -34,10 +34,18 @@ export default function NuevaRecetaPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       const { data: ings } = await supabase.from("ingredients").select("id, nombre, precio_por_unidad").eq("user_id", user.id);
-      const { data: yields } = await supabase.from("yield_tests").select("ingredient_id, porcentaje_rendimiento").eq("user_id", user.id);
+      const { data: yields, error: yieldError } = await supabase.from("yield_tests").select("ingredient_id, porcentaje_rendimiento").eq("user_id", user.id);
+      console.log("yields:", yields, "error:", yieldError);
       const yieldMap: Record<string, number> = {};
-      yields?.forEach((y: any) => { yieldMap[y.ingredient_id] = y.porcentaje_rendimiento; });
-      setIngredients((ings || []).map((i: any) => ({ ...i, rendimiento: yieldMap[i.id] })));
+      if (yields) {
+        yields.forEach((y: any) => { 
+          if (y.ingredient_id && y.porcentaje_rendimiento) {
+            yieldMap[y.ingredient_id] = y.porcentaje_rendimiento; 
+          }
+        });
+      }
+      console.log("yieldMap:", yieldMap);
+      setIngredients((ings || []).map((i: any) => ({ ...i, rendimiento: yieldMap[i.id] || undefined })));
       const { data: pr } = await supabase.from("recipes").select("id, nombre, costo_porcion").eq("user_id", user.id).eq("es_preparacion", true);
       setPreps(pr || []);
     };
@@ -71,6 +79,9 @@ export default function NuevaRecetaPage() {
     setCantidadPrep("1");
     setBusquedaPrep("");
   };
+
+  const quitarIng = (i: number) => setItems(items.filter((_, idx) => idx !== i));
+  const quitarPrep = (i: number) => setPrepItems(prepItems.filter((_, idx) => idx !== i));
 
   const guardar = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,7 +129,9 @@ export default function NuevaRecetaPage() {
           {busqueda && filtrados.length > 0 && (
             <div className="border rounded-lg mt-1 max-h-40 overflow-auto">
               {filtrados.map((i) => (
-                <button type="button" key={i.id} onClick={() => { setSeleccionado(i); setBusqueda(i.nombre); }} className="block w-full text-left px-3 py-2 hover:bg-stone-50 text-sm">{i.nombre}{i.rendimiento ? ` (${i.rendimiento}%)` : ""}</button>
+                <button type="button" key={i.id} onClick={() => { setSeleccionado(i); setBusqueda(i.nombre); }} className="block w-full text-left px-3 py-2 hover:bg-stone-50 text-sm">
+                  {i.nombre}{i.rendimiento ? ` (${i.rendimiento}%)` : ""}
+                </button>
               ))}
             </div>
           )}
@@ -132,7 +145,9 @@ export default function NuevaRecetaPage() {
             <div className="flex gap-2 mt-2">
               <input type="number" value={cantidad} onChange={(e) => setCantidad(e.target.value)} placeholder="Cantidad" className="flex-1 px-3 py-2 border rounded-lg" />
               <select value={unidad} onChange={(e) => setUnidad(e.target.value)} className="px-3 py-2 border rounded-lg">
-                <option value="g">g</option><option value="ml">ml</option><option value="unidad">unidad</option>
+                <option value="g">g</option>
+                <option value="ml">ml</option>
+                <option value="unidad">unidad</option>
               </select>
               <button type="button" onClick={agregarIng} className="px-4 py-2 bg-green-800 text-white rounded-lg text-sm">Agregar</button>
             </div>
@@ -158,15 +173,21 @@ export default function NuevaRecetaPage() {
         <div>
           <label className="block text-sm text-stone-600 mb-1">Qué lleva</label>
           {items.map((item, i) => (
-            <div key={"i" + i} className="flex justify-between py-1 text-sm border-b">
+            <div key={"i" + i} className="flex justify-between items-center py-1 text-sm border-b">
               <span>{item.nombre}: {item.cantidad} {item.unidad} {item.tipo_uso === "limpio" ? "(limpio)" : ""}</span>
-              <span>{formatCOP(item.costo)}</span>
+              <div className="flex items-center gap-2">
+                <span>{formatCOP(item.costo)}</span>
+                <button type="button" onClick={() => quitarIng(i)} className="text-stone-400">×</button>
+              </div>
             </div>
           ))}
           {prepItems.map((item, i) => (
-            <div key={"p" + i} className="flex justify-between py-1 text-sm border-b">
+            <div key={"p" + i} className="flex justify-between items-center py-1 text-sm border-b">
               <span>{item.nombre}: {item.cantidad} porción</span>
-              <span>{formatCOP(item.costo)}</span>
+              <div className="flex items-center gap-2">
+                <span>{formatCOP(item.costo)}</span>
+                <button type="button" onClick={() => quitarPrep(i)} className="text-stone-400">×</button>
+              </div>
             </div>
           ))}
           <p className="mt-2 text-sm font-medium">Costo total: {formatCOP(costoTotal)}</p>
