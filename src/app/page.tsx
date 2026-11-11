@@ -7,7 +7,7 @@ export default function HomePage() {
   const router = useRouter();
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ backgroundColor: "#F9F9F6", backgroundImage: "linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px)", backgroundSize: "32px 32px" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&display=swap" rel="stylesheet" />
+      <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap" rel="stylesheet" />
       <style>{`
         @keyframes breathe { 0%,100%{opacity:.45;transform:scale(1)} 50%{opacity:.75;transform:scale(1.1)} }
         .glow-fire{animation:breathe 5s ease-in-out infinite}
@@ -35,9 +35,18 @@ export default function HomePage() {
             </button>
             <button onClick={() => router.push("/register")} className="inline-flex items-center justify-center px-5 py-3.5 rounded-2xl text-white transition-all hover:scale-105" style={{ background: "linear-gradient(135deg,#E67E22,#D35400)" }}>Crear cuenta</button>
           </div>
-          <div className="fade-5 mt-10 inline-block bg-white p-2 shadow-md rotate-2">
-            <div className="w-40 h-28 bg-stone-200 flex items-center justify-center text-xs text-stone-400">Foto del plato</div>
-            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-12 h-4 bg-yellow-100/80 border border-yellow-200 rotate-3" />
+          <div className="fade-5 mt-10 relative inline-block">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-5 bg-gradient-to-b from-gray-300 to-gray-400 rounded-sm shadow" />
+            <div className="bg-white border border-stone-200 rounded-sm p-5 shadow-md relative" style={{ width: "220px" }}>
+              <div className="absolute bottom-4 right-4 w-8 h-8 rounded-full opacity-30" style={{ background: "radial-gradient(circle, #8B4513, transparent)" }} />
+              <p className="text-xs uppercase tracking-wider text-stone-400 mb-3">Prep list</p>
+              <div className="space-y-2 text-sm" style={{ fontFamily: "Caveat, cursive", fontSize: "18px" }}>
+                <p>☑ Costear Lomo al cilindro</p>
+                <p>□ Revisar merma del Ceviche</p>
+                <p>□ Actualizar precio de la carta</p>
+              </div>
+            </div>
+            <div className="absolute -bottom-2 -right-6 w-16 h-2 bg-yellow-600/40 rounded-full rotate-12" />
           </div>
         </div>
         <div className="fade-5 relative mt-8 lg:mt-0">
