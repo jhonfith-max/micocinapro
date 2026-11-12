@@ -11,14 +11,12 @@ const PASOS = [
   { n: "04", titulo: "Margen inteligente", texto: "Define tu Food Cost ideal y deja que el sistema calcule el precio.", rot: "-rotate-1" },
 ];
 
+// Chinche metálico más realista
 function Pin() {
   return (
-    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="7" r="5" fill="#9ca3af" />
-        <circle cx="12" cy="7" r="2.5" fill="#e5e7eb" />
-        <rect x="10.5" y="11" width="3" height="10" rx="1.5" fill="#6b7280" />
-      </svg>
+    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center">
+      <div className="w-5 h-5 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 shadow-[0_2px_4px_rgba(0,0,0,0.3)] border border-white/50" />
+      <div className="w-1.5 h-3 bg-gray-400 shadow-md -mt-1 rounded-b-sm" />
     </div>
   );
 }
@@ -41,63 +39,129 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col p-4 sm:p-8" style={{ backgroundColor: "#F9F9F6", backgroundImage: "radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 1px)", backgroundSize: "24px 24px" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
+    <div 
+      className="min-h-screen w-full flex flex-col p-6 sm:p-12 font-sans" 
+      style={{ 
+        backgroundColor: "#FAFAFA", 
+        backgroundImage: "radial-gradient(circle, #E5E7EB 1px, transparent 1px)", 
+        backgroundSize: "24px 24px" 
+      }}
+    >
+      <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Playfair+Display:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+      
       <style>{`
-        @keyframes dropIn{from{opacity:0;transform:translateY(-24px)}to{opacity:1;transform:translateY(0)}}
-        .drop-in{animation:dropIn .55s cubic-bezier(.34,1.56,.64,1) both}
+        @keyframes dropIn {
+          from { opacity: 0; transform: translateY(-20px) scale(0.98); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .drop-in { animation: dropIn .6s cubic-bezier(.2,.8,.2,1) both; }
       `}</style>
-      <div className="mb-8 text-center">
-        <p className="text-sm font-medium tracking-wide">MiCocinaPro</p>
-        <h1 className="mt-4 text-3xl sm:text-4xl leading-tight max-w-3xl mx-auto" style={{ fontFamily: "Playfair Display, serif", color: "#1A3A2A" }}>
+
+      {/* HEADER */}
+      <div className="mb-12 text-center flex flex-col items-center">
+        <div className="flex items-center gap-2 mb-6">
+          <div className="w-6 h-6 rounded bg-[#111827] flex items-center justify-center text-white text-xs font-bold">M</div>
+          <p className="text-sm font-semibold tracking-widest text-gray-500 uppercase">MiCocinaPro</p>
+        </div>
+        <h1 
+          className="text-3xl sm:text-5xl leading-[1.15] max-w-4xl mx-auto" 
+          style={{ fontFamily: "Playfair Display, serif", color: "#111827" }}
+        >
           El error que quiebra a los restaurantes no es la comida, es no saber cuánto cuesta.
         </h1>
       </div>
-      <div className="flex-1 flex items-center justify-center overflow-x-auto">
-        <div className="w-full max-w-7xl flex flex-col lg:flex-row gap-5 lg:gap-4 px-2">
+
+      {/* PANELES */}
+      <div className="flex-1 flex items-center justify-center w-full">
+        <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 lg:gap-4 px-2 items-stretch">
+          
           {PASOS.map((p, i) => (
-            <div key={p.n} className="flex-1 drop-in" style={{ animationDelay: `${i * 0.08}s` }}>
-              <div className={`relative h-full min-h-[300px] lg:min-w-[260px] p-6 rounded-xl text-white flex flex-col shadow-xl hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 ${p.rot}`} style={{ backgroundColor: "#1A3A2A" }}>
+            <div key={p.n} className="flex-1 drop-in flex" style={{ animationDelay: `${i * 0.08}s` }}>
+              <div 
+                className={`relative w-full min-h-[320px] p-7 bg-white rounded-2xl flex flex-col border border-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:-translate-y-1.5 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out ${p.rot}`}
+              >
                 <Pin />
-                <p className="text-lg font-semibold mt-2">{p.titulo}</p>
-                <p className="mt-2 text-sm text-gray-300">{p.texto}</p>
-                <div className="mt-auto pt-6 border-t border-white/10">
-                  <p className="text-6xl font-light" style={{ fontFamily: "Playfair Display, serif", color: "#D35400" }}>{p.n}</p>
+                <p className="text-lg font-semibold text-gray-900 mt-2">{p.titulo}</p>
+                <p className="mt-3 text-sm text-gray-500 leading-relaxed">{p.texto}</p>
+                
+                <div className="mt-auto pt-6">
+                  <p 
+                    className="text-[5.5rem] leading-none font-light opacity-20 select-none" 
+                    style={{ fontFamily: "Playfair Display, serif", color: "#111827" }}
+                  >
+                    {p.n}
+                  </p>
                 </div>
               </div>
             </div>
           ))}
-          <div className="flex-1 drop-in" style={{ animationDelay: "0.32s" }}>
-            <div className="relative h-full min-h-[300px] lg:min-w-[260px] bg-white border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col shadow-xl">
+
+          {/* LOGIN CARD */}
+          <div className="flex-1 drop-in flex" style={{ animationDelay: "0.32s" }}>
+            <div className="relative w-full min-h-[320px] bg-white border border-gray-200 rounded-2xl p-7 flex flex-col shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
               <Pin />
-              <div className="absolute -top-2 right-3 text-stone-500" style={{ fontFamily: "Caveat, cursive", fontSize: "17px" }}>
-                📎 Tu cocina te espera
+              
+              <div className="absolute -top-3 right-4 text-gray-500 flex items-center gap-1.5" style={{ fontFamily: "Caveat, cursive", fontSize: "18px" }}>
+                <span>📎</span> Tu cocina te espera
               </div>
-              <h1 className="text-xl font-semibold mt-2">Entrar</h1>
-              <p className="mt-1 text-xs text-stone-500">El costo de cada plato, claro y en orden.</p>
-              {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
-              <form onSubmit={entrar} className="mt-4 flex-1 flex flex-col">
-                <div className="space-y-3 flex-1">
+              
+              <h1 className="text-xl font-semibold text-gray-900 mt-2">Entrar</h1>
+              <p className="mt-1 text-xs text-gray-500">El costo de cada plato, claro y en orden.</p>
+              
+              {error && <p className="mt-2 text-xs text-red-500 font-medium">{error}</p>}
+              
+              <form onSubmit={entrar} className="mt-6 flex-1 flex flex-col">
+                <div className="space-y-4 flex-1">
                   <div>
-                    <label className="block text-xs text-stone-600 mb-1">Correo</label>
-                    <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none" />
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Correo</label>
+                    <input 
+                      required 
+                      type="email" 
+                      value={email} 
+                      onChange={(e) => setEmail(e.target.value)} 
+                      className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none transition-colors" 
+                      placeholder="chef@restaurante.com"
+                    />
                   </div>
                   <div>
-                    <label className="block text-xs text-stone-600 mb-1">Contraseña</label>
-                    <input required type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none" />
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Contraseña</label>
+                    <input 
+                      required 
+                      type="password" 
+                      value={password} 
+                      onChange={(e) => setPassword(e.target.value)} 
+                      className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none transition-colors" 
+                      placeholder="••••••••"
+                    />
                   </div>
                 </div>
-                <button disabled={loading} className="mt-4 w-full py-2.5 rounded-xl text-white text-sm transition-all hover:scale-105" style={{ background: "linear-gradient(135deg,#E67E22,#D35400)" }}>
+                
+                <button 
+                  disabled={loading} 
+                  className="mt-6 w-full py-2.5 rounded-lg text-white text-sm font-medium transition-all bg-[#4F46E5] hover:bg-[#4338CA] hover:shadow-lg hover:shadow-indigo-500/30 disabled:opacity-70 disabled:cursor-not-allowed"
+                >
                   {loading ? "Entrando..." : "Entrar y costear ahora"}
                 </button>
-                <button type="button" onClick={() => router.push("/register")} className="mt-2 text-xs text-stone-500 hover:text-stone-700">Crear cuenta</button>
+                
+                <button 
+                  type="button" 
+                  onClick={() => router.push("/register")} 
+                  className="mt-3 text-xs text-gray-500 hover:text-gray-900 font-medium transition-colors"
+                >
+                  Crear cuenta nueva
+                </button>
               </form>
             </div>
           </div>
+
         </div>
       </div>
-      <div className="mt-8 text-center">
-        <p className="text-sm text-stone-500">Deja de usar Excel. MiCocinaPro conecta tus compras con tu carta en 4 pasos.</p>
+
+      {/* FOOTER */}
+      <div className="mt-12 text-center">
+        <p className="text-xs text-gray-400 font-medium">
+          Deja de usar Excel. MiCocinaPro conecta tus compras con tu carta en 4 pasos.
+        </p>
       </div>
     </div>
   );
