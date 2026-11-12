@@ -10,6 +10,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [restaurante, setRestaurante] = useState("");
+  const [telefono, setTelefono] = useState(""); // Nuevo estado para el celular
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -18,12 +19,15 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
     
-    // 1. Creamos el usuario en Supabase
+    // 1. Creamos el usuario en Supabase con el teléfono incluido
     const { data, error } = await supabase.auth.signUp({ 
       email, 
       password,
       options: {
-        data: { nombre_restaurante: restaurante }
+        data: { 
+          nombre_restaurante: restaurante,
+          telefono: telefono 
+        }
       }
     });
 
@@ -35,7 +39,6 @@ export default function RegisterPage() {
 
     // 2. Si todo sale bien, lo enviamos al dashboard
     if (data.user) {
-      // (Opcional: Aquí podrías insertar el nombre del restaurante en la tabla 'profiles')
       router.push("/dashboard");
     }
   };
@@ -49,8 +52,6 @@ export default function RegisterPage() {
         backgroundSize: "24px 24px" 
       }}
     >
-      <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Playfair+Display:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-
       <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-6 duration-700">
         
         {/* LOGO */}
@@ -82,6 +83,21 @@ export default function RegisterPage() {
                 onChange={(e) => setRestaurante(e.target.value)} 
                 className="w-full px-4 py-2.5 bg-[#FAFAFA] border border-[#E5E5E5] rounded-lg text-sm text-gray-900 focus:bg-white focus:ring-2 focus:ring-[#4F46E5]/20 focus:border-[#4F46E5] focus:outline-none transition-colors" 
                 placeholder="Ej. Pizzeria Trizza"
+              />
+            </div>
+
+            {/* NUEVO CAMPO: TELÉFONO */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                WhatsApp <span className="text-gray-400 font-normal">(para activar tu cuenta rápido)</span>
+              </label>
+              <input 
+                required 
+                type="tel" 
+                value={telefono} 
+                onChange={(e) => setTelefono(e.target.value)} 
+                className="w-full px-4 py-2.5 bg-[#FAFAFA] border border-[#E5E5E5] rounded-lg text-sm text-gray-900 focus:bg-white focus:ring-2 focus:ring-[#4F46E5]/20 focus:border-[#4F46E5] focus:outline-none transition-colors" 
+                placeholder="Ej. 300 123 4567"
               />
             </div>
 
@@ -125,10 +141,10 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* MENSAJE DE PAGO MANUAL (Tu estrategia) */}
+        {/* MENSAJE DE PAGO MANUAL (Actualizado para mencionar el WhatsApp) */}
         <div className="mt-6 text-center bg-indigo-50 border border-indigo-100 rounded-xl p-4">
           <p className="text-xs text-indigo-900 leading-relaxed">
-            <strong>Nota de lanzamiento:</strong> Al crear tu cuenta, nuestro equipo se pondrá en contacto contigo por WhatsApp para activar tu prueba gratuita y los métodos de pago (Nequi / Daviplata).
+            <strong>Nota de lanzamiento:</strong> Al crear tu cuenta, te escribiremos a tu <strong>WhatsApp</strong> para activar tu prueba y darte los métodos de pago (Nequi / Daviplata).
           </p>
         </div>
 
