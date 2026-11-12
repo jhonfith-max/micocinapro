@@ -41,11 +41,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {LINKS.map((link) => {
         const activo = pathname === link.href || (link.href !== "/dashboard" && pathname.startsWith(link.href));
         return (
-          <a key={link.href} href={link.href} className={"flex items-center gap-3 px-4 py-3 rounded-xl mx-2 " + (activo ? "bg-green-800 text-white" : "text-stone-700 hover:bg-stone-100")}>
+          <a 
+            key={link.href} 
+            href={link.href} 
+            className={"flex items-center gap-3 px-4 py-2.5 rounded-lg mx-3 transition-colors " + (
+              activo 
+                ? "bg-[#4F46E5] text-white shadow-sm" 
+                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+            )}
+          >
             <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={link.icono} />
             </svg>
-            <span className="text-sm">{link.nombre}</span>
+            <span className="text-sm font-medium">{link.nombre}</span>
           </a>
         );
       })}
@@ -53,35 +61,51 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   );
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-stone-200 sticky top-0 z-30">
-        <button onClick={() => setAbierto(true)} className="p-2">
+    <div className="min-h-screen bg-[#FAF9F6] font-sans">
+      {/* HEADER MÓVIL */}
+      <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200 sticky top-0 z-30">
+        <button onClick={() => setAbierto(true)} className="p-2 text-gray-600">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <span className="font-semibold">MiCocinaPro</span>
+        <span className="font-bold text-gray-900 tracking-tight">MiCocinaPro</span>
         <div className="w-10" />
       </div>
+
+      {/* MENÚ MÓVIL DESPLEGABLE */}
       {abierto && (
         <div className="lg:hidden fixed inset-0 z-40">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setAbierto(false)} />
-          <div className="absolute left-0 top-0 bottom-0 w-72 bg-white flex flex-col">
-            <div className="flex items-center justify-between px-4 py-4 border-b border-stone-100">
-              <span className="font-semibold">MiCocinaPro</span>
-              <button onClick={() => setAbierto(false)} className="p-2 text-stone-400">Cerrar</button>
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setAbierto(false)} />
+          <div className="absolute left-0 top-0 bottom-0 w-72 bg-white flex flex-col shadow-2xl">
+            <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100">
+              <span className="font-bold text-gray-900">MiCocinaPro</span>
+              <button onClick={() => setAbierto(false)} className="p-2 text-gray-400 hover:text-gray-600">✕</button>
             </div>
             {menu}
-            <button onClick={salir} className="mx-4 mb-4 text-sm text-stone-400 text-left">Cerrar sesión</button>
+            <button onClick={salir} className="mx-4 mb-6 text-sm text-gray-500 hover:text-red-500 text-left transition-colors">Cerrar sesión</button>
           </div>
         </div>
       )}
-      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-56 bg-white border-r border-stone-200 flex-col z-20">
-        <div className="px-4 py-5 font-semibold">MiCocinaPro</div>
+
+      {/* SIDEBAR ESCRITORIO */}
+      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-gray-200 flex-col z-20">
+        <div className="px-6 py-6 flex items-center gap-2">
+          <div className="w-6 h-6 rounded bg-[#111827] flex items-center justify-center text-white text-xs font-bold">M</div>
+          <span className="font-bold text-gray-900 tracking-tight">MiCocinaPro</span>
+        </div>
         {menu}
-        <button onClick={salir} className="mx-4 mb-4 text-sm text-stone-400 text-left">{nombre ? "Cerrar sesión" : "Salir"}</button>
+        <div className="p-4 border-t border-gray-100">
+          <button onClick={salir} className="w-full text-sm text-gray-500 hover:text-red-500 text-left transition-colors px-2">
+            {nombre ? "Cerrar sesión" : "Salir"}
+          </button>
+        </div>
       </aside>
-      <main className="lg:ml-56 p-4 lg:p-8">{children}</main>
+
+      {/* CONTENIDO PRINCIPAL */}
+      <main className="lg:ml-64 p-4 lg:p-10 transition-all">
+        {children}
+      </main>
     </div>
   );
 }

@@ -41,25 +41,57 @@ export default function ConfiguracionPage() {
   };
 
   return (
-    <div className="max-w-xl">
-      <h1 className="text-2xl font-semibold mb-6">Configuración</h1>
-      <div className="space-y-4">
+    <div className="max-w-xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight" style={{ fontFamily: "Playfair Display, serif" }}>Configuración</h1>
+        <p className="text-sm text-gray-500 mt-1">Personaliza los datos que aparecerán en tu carta y recetario.</p>
+      </div>
+      
+      <div className="space-y-6 bg-white p-6 sm:p-8 rounded-2xl border border-[#E5E5E5] shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Nombre del restaurante</label>
-          <input value={nombre} onChange={(e) => setNombre(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+          <label className="block text-xs font-semibold text-gray-600 mb-2">Nombre del restaurante</label>
+          <input 
+            value={nombre} 
+            onChange={(e) => setNombre(e.target.value)} 
+            className="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E5E5E5] rounded-lg text-sm text-gray-900 focus:bg-white focus:ring-2 focus:ring-[#4F46E5]/20 focus:border-[#4F46E5] focus:outline-none transition-colors" 
+            placeholder="Ej. Pizzeria Trizza"
+          />
         </div>
+        
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Dirección</label>
-          <input value={direccion} onChange={(e) => setDireccion(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+          <label className="block text-xs font-semibold text-gray-600 mb-2">Dirección</label>
+          <input 
+            value={direccion} 
+            onChange={(e) => setDireccion(e.target.value)} 
+            className="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E5E5E5] rounded-lg text-sm text-gray-900 focus:bg-white focus:ring-2 focus:ring-[#4F46E5]/20 focus:border-[#4F46E5] focus:outline-none transition-colors" 
+            placeholder="Ej. Calle 13 #14b-9b"
+          />
         </div>
+        
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Logo</label>
-          {logo && <img src={logo} alt="" className="w-16 h-16 object-contain mb-2" />}
-          <input type="file" accept="image/*" onChange={(e) => setArchivo(e.target.files?.[0] || null)} className="w-full text-sm" />
+          <label className="block text-xs font-semibold text-gray-600 mb-2">Logo de la marca</label>
+          {logo && (
+            <div className="mb-4 p-4 border border-gray-100 rounded-lg inline-block bg-gray-50">
+              <img src={logo} alt="Logo" className="w-16 h-16 object-contain" />
+            </div>
+          )}
+          <input 
+            type="file" 
+            accept="image/*" 
+            onChange={(e) => setArchivo(e.target.files?.[0] || null)} 
+            className="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 transition-colors" 
+          />
         </div>
-        <button onClick={guardar} disabled={guardando} className="px-6 py-3 bg-green-800 text-white rounded-xl">
-          {guardando ? "Guardando..." : "Guardar"}
-        </button>
+        
+        <div className="pt-4 border-t border-gray-100">
+          <button 
+            onClick={guardar} 
+            disabled={guardando} 
+            className="w-full sm:w-auto px-8 py-3 bg-[#4F46E5] hover:bg-[#4338CA] text-white text-sm font-medium rounded-lg shadow-sm hover:shadow-md transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            {guardando ? "Guardando..." : "Guardar cambios"}
+          </button>
+        </div>
       </div>
     </div>
   );
