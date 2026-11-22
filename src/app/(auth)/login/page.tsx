@@ -6,10 +6,10 @@ import { supabase } from "@/lib/supabase";
 import { LogoLockup } from "@/components/LogoMark";
 
 const PASOS = [
-  { n: "01", titulo: "Compras reales", texto: "Registra la factura del proveedor. El costo real, no el que crees.", rot: "rotate-1", nota: "¡Ojo con el proveedor!" },
-  { n: "02", titulo: "Pérdidas controladas", texto: "El 30% de tu cocina se va a la basura. Cóbralo en el plato.", rot: "-rotate-1", nota: "Revisar merma" },
-  { n: "03", titulo: "El secreto de la casa", texto: "Controla el costo de tus salsas y bases, no solo del plato final.", rot: "rotate-1", nota: "Receta de la abuela" },
-  { n: "04", titulo: "Margen inteligente", texto: "Define tu Food Cost ideal y deja que el sistema calcule el precio.", rot: "-rotate-1", nota: "Margen 30%" },
+  { n: "01", titulo: "Compras reales", texto: "Registra la factura del proveedor. El costo real, no el que crees.", rot: "lg:rotate-1", nota: "¡Ojo con el proveedor!" },
+  { n: "02", titulo: "Pérdidas controladas", texto: "El 30% de tu cocina se va a la basura. Cóbralo en el plato.", rot: "lg:-rotate-1", nota: "Revisar merma" },
+  { n: "03", titulo: "El secreto de la casa", texto: "Controla el costo de tus salsas y bases, no solo del plato final.", rot: "lg:rotate-1", nota: "Receta de la abuela" },
+  { n: "04", titulo: "Margen inteligente", texto: "Define tu Food Cost ideal y deja que el sistema calcule el precio.", rot: "lg:-rotate-1", nota: "Margen 30%" },
 ];
 
 function Cinta() {
@@ -43,7 +43,7 @@ export default function LoginPage() {
 
   return (
     <div 
-      className="min-h-screen w-full flex flex-col p-4 sm:p-8 lg:p-12 font-sans overflow-hidden" 
+      className="min-h-screen w-full flex flex-col px-4 py-10 sm:p-8 lg:p-12 font-sans overflow-x-hidden lg:overflow-hidden" 
       style={{ 
         backgroundColor: "#F6F4F1", // Crema muy limpio
         backgroundImage: "radial-gradient(circle, #E8E4DF 1px, transparent 1px)", 
@@ -65,8 +65,8 @@ export default function LoginPage() {
       `}</style>
 
       {/* HEADER */}
-      <div className="mb-8 lg:mb-12 text-center flex flex-col items-center drop-in" style={{ animationDelay: "0.1s" }}>
-        <div className="flex items-center gap-2 mb-4">
+      <div className="mt-2 mb-10 lg:mt-0 lg:mb-12 text-center flex flex-col items-center drop-in" style={{ animationDelay: "0.1s" }}>
+        <div className="flex items-center gap-2 mb-6">
           <LogoLockup markClassName="h-7 w-auto" wordClassName="text-base" />
         </div>
         <h1 
@@ -75,16 +75,17 @@ export default function LoginPage() {
         >
           El error que quiebra a los restaurantes no es la comida, es no saber cuánto cuesta.
         </h1>
+        <p className="mt-5 text-sm text-[#6B6560] lg:hidden">Desliza para ver los pasos ↓</p>
       </div>
 
       {/* CONTENEDOR DE TARJETAS */}
-      <div className="flex-1 flex items-center w-full max-w-[1400px] mx-auto">
-        <div className="w-full flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 px-4 lg:grid lg:grid-cols-5 lg:overflow-visible lg:pb-0 lg:px-0 lg:gap-5 items-stretch hide-scrollbar">
+      <div className="flex-1 flex items-start lg:items-center w-full max-w-[1400px] mx-auto">
+        <div className="w-full flex flex-col gap-8 pb-6 lg:grid lg:grid-cols-5 lg:gap-5 lg:pb-0 items-stretch">
           
           {PASOS.map((p, i) => (
-            <div key={p.n} className="min-w-[85vw] sm:min-w-[320px] lg:min-w-0 snap-center drop-in flex" style={{ animationDelay: `${i * 0.1}s` }}>
+            <div key={p.n} className="w-full lg:min-w-0 drop-in flex" style={{ animationDelay: `${i * 0.1}s` }}>
               <div 
-                className={`relative w-full min-h-[340px] p-6 paper-texture rounded-sm flex flex-col border border-[#EBE8E0] shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:-translate-y-1.5 hover:shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out ${p.rot}`}
+                className={`relative w-full min-h-[340px] p-6 sm:p-7 lg:p-6 paper-texture rounded-sm flex flex-col border border-[#EBE8E0] shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:-translate-y-1.5 hover:shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out ${p.rot}`}
               >
                 <Cinta />
                 
@@ -105,7 +106,7 @@ export default function LoginPage() {
                 
                 <div className="mt-auto pt-6 flex justify-between items-end relative z-0">
                   <p 
-                    className="text-[4.5rem] leading-none font-light text-[#1C1B19] opacity-[0.06] select-none -ml-2" 
+                    className="text-5xl lg:text-[4.5rem] leading-none font-light text-[#1C1B19] opacity-[0.06] select-none -ml-2" 
                     style={{ fontFamily: "Playfair Display, serif" }}
                   >
                     {p.n}
@@ -118,8 +119,8 @@ export default function LoginPage() {
           ))}
 
           {/* LOGIN CARD */}
-          <div className="min-w-[85vw] sm:min-w-[320px] lg:min-w-0 snap-center drop-in flex" style={{ animationDelay: "0.5s" }}>
-            <div className="relative w-full min-h-[340px] paper-texture border border-[#D1C9B6] rounded-sm p-6 pt-9 flex flex-col shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
+          <div className="w-full lg:min-w-0 drop-in flex my-4 lg:my-0" style={{ animationDelay: "0.5s" }}>
+            <div className="relative w-full min-h-[340px] paper-texture border border-[#D1C9B6] rounded-sm p-6 py-8 lg:p-6 lg:pt-9 flex flex-col shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
               <Cinta />
               
               <div className="absolute top-3 right-3 text-[#C45C26] flex items-center gap-1 z-20 bg-white/50 px-2 py-1 rounded backdrop-blur-sm" style={{ fontFamily: "Caveat, cursive", fontSize: "19px" }}>
@@ -179,16 +180,12 @@ export default function LoginPage() {
       </div>
 
       {/* FOOTER */}
-      <div className="mt-4 lg:mt-8 text-center drop-in" style={{ animationDelay: "0.6s" }}>
+      <div className="mt-8 mb-6 lg:mt-8 lg:mb-0 text-center drop-in" style={{ animationDelay: "0.6s" }}>
         <p className="text-xs text-[#6B6560] font-medium">
           Deja de usar Excel. MiCocinaPro conecta tus compras con tu carta en 4 pasos.
         </p>
       </div>
 
-      <style>{`
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
     </div>
   );
 }
