@@ -118,14 +118,14 @@ export default function RecetarioPage() {
 
       <div className="no-print flex justify-between items-center mb-6">
         <div>
-          <p className="text-xs uppercase tracking-widest text-green-800">Recetario</p>
+          <p className="text-xs uppercase tracking-widest text-[#C45C26]">Recetario</p>
           <h1 className="text-2xl font-semibold">Fichas técnicas</h1>
         </div>
         <button onClick={() => window.print()} className="px-4 py-2 border rounded-lg text-sm">Imprimir</button>
       </div>
       <div className="no-print flex gap-2 mb-6">
-        <button onClick={() => setVista("cocina")} className={`px-4 py-2 rounded-full text-sm ${vista === "cocina" ? "bg-green-800 text-white" : "bg-stone-100"}`}>Ficha de cocina</button>
-        <button onClick={() => setVista("costeo")} className={`px-4 py-2 rounded-full text-sm ${vista === "costeo" ? "bg-green-800 text-white" : "bg-stone-100"}`}>Ficha de costeo</button>
+        <button onClick={() => setVista("cocina")} className={`px-4 py-2 rounded-full text-sm ${vista === "cocina" ? "bg-[#C45C26] text-white hover:bg-[#A34B1E]" : "bg-[#F6F4F1]"}`}>Ficha de cocina</button>
+        <button onClick={() => setVista("costeo")} className={`px-4 py-2 rounded-full text-sm ${vista === "costeo" ? "bg-[#C45C26] text-white hover:bg-[#A34B1E]" : "bg-[#F6F4F1]"}`}>Ficha de costeo</button>
       </div>
 
       <div className="space-y-8">
@@ -139,14 +139,14 @@ export default function RecetarioPage() {
           const indirecto = subtotal * 0.08;
           const total = subtotal + indirecto;
           return (
-            <div key={r.id} className="ficha border border-stone-300 p-6 bg-white text-sm">
+            <div key={r.id} className="ficha border border-[#E8E4DF] p-6 bg-white text-sm">
               {r.foto && <img src={r.foto} alt="" className="w-full max-h-48 object-cover rounded mb-4" />}
-              <div className="flex justify-between border-b border-stone-300 pb-3 mb-4">
+              <div className="flex justify-between border-b border-[#E8E4DF] pb-3 mb-4">
                 <div>
-                  <p className="text-xs text-stone-500">{r.es_preparacion ? "SUB-RECETA" : "PLATO"}</p>
+                  <p className="text-xs text-[#6B6560]">{r.es_preparacion ? "SUB-RECETA" : "PLATO"}</p>
                   <h2 className="text-xl font-semibold mt-1">{r.nombre}</h2>
                 </div>
-                <div className="text-right text-xs text-stone-500">
+                <div className="text-right text-xs text-[#6B6560]">
                   <p>Código: {r.id.slice(0, 8).toUpperCase()}</p>
                   <p>Porciones: {r.porciones || 1}</p>
                   <p>Peso final aprox.: {pesoNeta} g</p>
@@ -155,7 +155,7 @@ export default function RecetarioPage() {
 
               <table className="w-full text-xs mb-4">
                 <thead>
-                  <tr className="border-b border-stone-300 text-stone-500">
+                  <tr className="border-b border-[#E8E4DF] text-[#6B6560]">
                     <th className="text-left py-1">Ingrediente / Subreceta</th>
                     <th className="text-right">Cant. Neta</th>
                     <th className="text-right">Unidad</th>
@@ -168,7 +168,7 @@ export default function RecetarioPage() {
                   {ings.map((ing, i) => {
                     const bruta = ing.merma > 0 ? Math.round(ing.cantidad / (1 - ing.merma / 100)) : ing.cantidad;
                     return (
-                      <tr key={"i" + i} className="border-b border-stone-100">
+                      <tr key={"i" + i} className="border-b border-[#E8E4DF]">
                         <td className="py-1">{ing.nombre}</td>
                         <td className="text-right">{ing.cantidad}</td>
                         <td className="text-right">{ing.unidad}</td>
@@ -179,7 +179,7 @@ export default function RecetarioPage() {
                     );
                   })}
                   {subs.map((sub, i) => (
-                    <tr key={"s" + i} className="border-b border-stone-100">
+                    <tr key={"s" + i} className="border-b border-[#E8E4DF]">
                       <td className="py-1">{sub.nombre}</td>
                       <td className="text-right">{sub.cantidad}</td>
                       <td className="text-right">porción</td>
@@ -189,35 +189,35 @@ export default function RecetarioPage() {
                     </tr>
                   ))}
                   {ings.length === 0 && subs.length === 0 && (
-                    <tr><td colSpan={6} className="py-2 text-stone-400">Sin ingredientes</td></tr>
+                    <tr><td colSpan={6} className="py-2 text-[#6B6560]">Sin ingredientes</td></tr>
                   )}
                 </tbody>
               </table>
 
               {vista === "costeo" && (
-                <div className="grid grid-cols-2 gap-4 text-xs border-t border-stone-300 pt-3">
+                <div className="grid grid-cols-2 gap-4 text-xs border-t border-[#E8E4DF] pt-3">
                   <div>
                     <p>Subtotal materia prima: <span className="font-medium">{formatCOP(subtotal)}</span></p>
                     <p>Impoconsumo (8%): <span className="font-medium">{formatCOP(indirecto)}</span></p>
                     <p>Costo total: <span className="font-medium">{formatCOP(total)}</span></p>
                   </div>
                   <div className="text-right">
-                    <p>Costo por porción: <span className="font-medium">{formatCOP(total / (r.porciones || 1))}</span></p>
-                    {r.precio_venta ? <p>Precio venta: <span className="font-medium">{formatCOP(r.precio_venta)}</span></p> : null}
-                    {r.precio_venta ? <p className="font-semibold">Food cost: {foodCost(r)}%</p> : null}
+                    <p className="text-sm font-bold text-[#1C1B19]">Costo por porción: {formatCOP(total / (r.porciones || 1))}</p>
+                    {r.precio_venta ? <p className="text-base font-bold text-[#1C1B19]">Precio venta: {formatCOP(r.precio_venta)}</p> : null}
+                    {r.precio_venta ? <p className="text-base font-bold text-[#C45C26]">Food cost: {foodCost(r)}%</p> : null}
                   </div>
                 </div>
               )}
 
               {r.instrucciones && (
-                <div className="mt-4 pt-3 border-t border-stone-200">
-                  <p className="text-xs font-medium text-stone-500 mb-1">Producción</p>
-                  <p className="text-xs text-stone-700 whitespace-pre-wrap">{r.instrucciones}</p>
+                <div className="mt-4 pt-3 border-t border-[#E8E4DF]">
+                  <p className="text-xs font-medium text-[#6B6560] mb-1">Producción</p>
+                  <p className="text-xs text-[#1C1B19] whitespace-pre-wrap">{r.instrucciones}</p>
                 </div>
               )}
 
               {(r.alergenos || r.pcc) && (
-                <div className="mt-3 text-xs text-stone-600 space-y-1">
+                <div className="mt-3 text-xs text-[#6B6560] space-y-1">
                   {r.alergenos && <p><span className="font-medium">Alérgenos:</span> {r.alergenos}</p>}
                   {r.pcc && <p><span className="font-medium">Puntos Críticos (PCC):</span> {r.pcc}</p>}
                 </div>

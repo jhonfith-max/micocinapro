@@ -4,14 +4,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        ink: "#1c1612",
-        parchment: "#f4ead6",
-        cream: "#fbf6ea",
-        herb: "#24382c",
-        leaf: "#3d5a45",
-        copper: "#c45c26",
-        ember: "#e08a4a",
-        moss: "#7a8f6a",
+        ink: "#1C1B19",
+        parchment: "#F6F4F1",
+        cream: "#F6F4F1",
+        herb: "#1C1B19",
+        leaf: "#6B6560",
+        copper: "#C45C26",
+        ember: "#A34B1E",
+        moss: "#6B6560",
       },
       fontFamily: {
         display: ["var(--font-display)", "Georgia", "serif"],

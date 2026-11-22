@@ -49,22 +49,22 @@ export default function CartaPage() {
       <div className="text-center mb-8">
         {logo && <img src={logo} alt="" className="w-16 h-16 object-contain mx-auto mb-3 print:w-12 print:h-12" />}
         <h1 className="text-2xl font-semibold">{nombre || "La carta"}</h1>
-        {direccion && <p className="text-sm text-stone-400 mt-1">{direccion}</p>}
+        {direccion && <p className="text-sm text-[#6B6560] mt-1">{direccion}</p>}
       </div>
       <div className="flex justify-center gap-2 mb-8">
-        <button onClick={compartir} className="px-4 py-2 text-sm text-stone-600 border border-stone-200 rounded-full">Compartir</button>
-        <button onClick={() => window.print()} className="px-4 py-2 text-sm text-stone-600 border border-stone-200 rounded-full">Imprimir</button>
+        <button onClick={compartir} className="px-4 py-2 text-sm text-[#6B6560] border border-[#E8E4DF] rounded-full">Compartir</button>
+        <button onClick={() => window.print()} className="px-4 py-2 text-sm text-[#6B6560] border border-[#E8E4DF] rounded-full">Imprimir</button>
       </div>
       <div className="space-y-0">
         {recipes.map((r) => (
-          <a href={"/dashboard/recetas/" + r.id} key={r.id} className="flex justify-between items-center py-4 border-b border-stone-100 hover:bg-stone-50 px-2">
+          <a href={"/dashboard/recetas/" + r.id} key={r.id} className="flex justify-between items-center py-4 border-b border-[#E8E4DF] hover:bg-[#F6F4F1] px-2">
             <div>
               <p className="font-medium">{r.nombre}</p>
-              <p className="text-xs text-stone-400">{formatCOP(r.costo_total)}</p>
+              <p className="text-sm font-bold text-[#1C1B19]">{formatCOP(r.costo_total)}</p>
             </div>
             <div className="text-right">
-              <p className="font-semibold">{formatCOP(r.precio_venta)}</p>
-              <span className={`text-xs ${foodCost(r) > 30 ? "text-red-500" : "text-green-600"}`}>{foodCost(r)}%</span>
+              <p className="text-lg font-bold text-[#1C1B19]">{formatCOP(r.precio_venta)}</p>
+              <span className={`text-sm font-bold ${foodCost(r) > 30 ? "text-red-600" : "text-[#C45C26]"}`}>Food cost {foodCost(r)}%</span>
             </div>
           </a>
         ))}

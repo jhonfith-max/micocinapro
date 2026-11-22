@@ -85,24 +85,24 @@ export default function NuevaSubrecetaPage() {
       <h1 className="text-2xl font-semibold mb-6">Nueva subreceta</h1>
       <form onSubmit={guardar} className="space-y-4">
         <div>
-          <label className="block text-sm text-stone-600 mb-1">¿Cómo se llama?</label>
+          <label className="block text-sm text-[#6B6560] mb-1">¿Cómo se llama?</label>
           <input required value={nombre} onChange={(e) => setNombre(e.target.value)} className="w-full px-4 py-2.5 border rounded-lg" />
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">¿Para cuántos platos alcanza?</label>
+          <label className="block text-sm text-[#6B6560] mb-1">¿Para cuántos platos alcanza?</label>
           <input type="number" value={porciones} onChange={(e) => setPorciones(e.target.value)} className="w-full px-4 py-2.5 border rounded-lg" />
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Peso final aproximado (g)</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Peso final aproximado (g)</label>
           <input type="number" value={pesoPorcion} onChange={(e) => setPesoPorcion(e.target.value)} className="w-full px-4 py-2.5 border rounded-lg" />
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Agregar ingrediente</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Agregar ingrediente</label>
           <input value={busqueda} onChange={(e) => setBusqueda(e.target.value)} placeholder="Buscar..." className="w-full px-4 py-2.5 border rounded-lg" />
           {busqueda && filtrados.length > 0 && (
             <div className="border rounded-lg mt-1 max-h-40 overflow-auto">
               {filtrados.map((i) => (
-                <button type="button" key={i.id} onClick={() => { setSeleccionado(i); setBusqueda(i.nombre); }} className="block w-full text-left px-3 py-2 hover:bg-stone-50 text-sm">{i.nombre}</button>
+                <button type="button" key={i.id} onClick={() => { setSeleccionado(i); setBusqueda(i.nombre); }} className="block w-full text-left px-3 py-2 hover:bg-[#F6F4F1] text-sm">{i.nombre}</button>
               ))}
             </div>
           )}
@@ -114,36 +114,36 @@ export default function NuevaSubrecetaPage() {
                 <option value="ml">ml</option>
                 <option value="unidad">unidad</option>
               </select>
-              <button type="button" onClick={agregar} className="px-4 py-2 bg-green-800 text-white rounded-lg text-sm">Agregar</button>
+              <button type="button" onClick={agregar} className="px-4 py-2 bg-[#C45C26] text-white hover:bg-[#A34B1E] rounded-xl text-sm">Agregar</button>
             </div>
           )}
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Qué lleva</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Qué lleva</label>
           {items.map((item, i) => (
             <div key={i} className="flex justify-between items-center py-2 border-b text-sm">
               <span>{item.nombre}: {item.cantidad} {item.unidad}</span>
               <div className="flex items-center gap-3">
                 <span>{formatCOP(item.costo)}</span>
-                <button type="button" onClick={() => quitar(i)} className="text-stone-400">×</button>
+                <button type="button" onClick={() => quitar(i)} className="text-[#6B6560]">×</button>
               </div>
             </div>
           ))}
           <p className="mt-2 text-sm">Costo por porción: {formatCOP(costoPorcion)}</p>
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Procedimiento</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Procedimiento</label>
           <textarea value={procedimiento} onChange={(e) => setProcedimiento(e.target.value)} rows={4} className="w-full px-4 py-2.5 border rounded-lg" />
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Alérgenos</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Alérgenos</label>
           <input type="text" value={alergenos} onChange={(e) => setAlergenos(e.target.value)} placeholder="Ej: Contiene lácteos, gluten" className="w-full px-4 py-2.5 border rounded-lg" />
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Puntos Críticos (PCC)</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Puntos Críticos (PCC)</label>
           <input type="text" value={pcc} onChange={(e) => setPcc(e.target.value)} placeholder="Ej: Freír a 180°C" className="w-full px-4 py-2.5 border rounded-lg" />
         </div>
-        <button disabled={loading} className="px-6 py-3 bg-green-800 text-white rounded-lg">{loading ? "Guardando..." : "Guardar"}</button>
+        <button disabled={loading} className="px-6 py-3 bg-[#C45C26] text-white hover:bg-[#A34B1E] rounded-xl">{loading ? "Guardando..." : "Guardar"}</button>
       </form>
     </div>
   );

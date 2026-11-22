@@ -4,7 +4,7 @@ export function BrandMark({ light = false }: { light?: boolean }) {
       <span
         className={
           "relative grid h-11 w-11 place-items-center rounded-2xl text-lg font-semibold " +
-          (light ? "bg-copper text-cream" : "bg-herb text-cream")
+          "bg-copper text-white"
         }
         style={{ fontFamily: "var(--font-display), Georgia, serif" }}
       >

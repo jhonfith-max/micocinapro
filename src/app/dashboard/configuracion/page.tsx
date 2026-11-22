@@ -43,35 +43,35 @@ export default function ConfiguracionPage() {
   return (
     <div className="max-w-xl animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 tracking-tight" style={{ fontFamily: "Playfair Display, serif" }}>Configuración</h1>
-        <p className="text-sm text-gray-500 mt-1">Personaliza los datos que aparecerán en tu carta y recetario.</p>
+        <h1 className="text-2xl font-bold text-[#1C1B19] tracking-tight" style={{ fontFamily: "Playfair Display, serif" }}>Configuración</h1>
+        <p className="text-sm text-[#6B6560] mt-1">Personaliza los datos que aparecerán en tu carta y recetario.</p>
       </div>
       
-      <div className="space-y-6 bg-white p-6 sm:p-8 rounded-2xl border border-[#E5E5E5] shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+      <div className="space-y-6 bg-white p-6 sm:p-8 rounded-2xl border border-[#E8E4DF] shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-2">Nombre del restaurante</label>
+          <label className="block text-xs font-semibold text-[#6B6560] mb-2">Nombre del restaurante</label>
           <input 
             value={nombre} 
             onChange={(e) => setNombre(e.target.value)} 
-            className="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E5E5E5] rounded-lg text-sm text-gray-900 focus:bg-white focus:ring-2 focus:ring-[#4F46E5]/20 focus:border-[#4F46E5] focus:outline-none transition-colors" 
+            className="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E8E4DF] rounded-lg text-sm text-[#1C1B19] focus:bg-white focus:ring-2 focus:ring-[#C45C26]/20 focus:border-[#C45C26] focus:outline-none transition-colors" 
             placeholder="Ej. Pizzeria Trizza"
           />
         </div>
         
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-2">Dirección</label>
+          <label className="block text-xs font-semibold text-[#6B6560] mb-2">Dirección</label>
           <input 
             value={direccion} 
             onChange={(e) => setDireccion(e.target.value)} 
-            className="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E5E5E5] rounded-lg text-sm text-gray-900 focus:bg-white focus:ring-2 focus:ring-[#4F46E5]/20 focus:border-[#4F46E5] focus:outline-none transition-colors" 
+            className="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E8E4DF] rounded-lg text-sm text-[#1C1B19] focus:bg-white focus:ring-2 focus:ring-[#C45C26]/20 focus:border-[#C45C26] focus:outline-none transition-colors" 
             placeholder="Ej. Calle 13 #14b-9b"
           />
         </div>
         
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-2">Logo de la marca</label>
+          <label className="block text-xs font-semibold text-[#6B6560] mb-2">Logo de la marca</label>
           {logo && (
-            <div className="mb-4 p-4 border border-gray-100 rounded-lg inline-block bg-gray-50">
+            <div className="mb-4 p-4 border border-[#E8E4DF] rounded-lg inline-block bg-[#F6F4F1]">
               <img src={logo} alt="Logo" className="w-16 h-16 object-contain" />
             </div>
           )}
@@ -79,15 +79,15 @@ export default function ConfiguracionPage() {
             type="file" 
             accept="image/*" 
             onChange={(e) => setArchivo(e.target.files?.[0] || null)} 
-            className="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 transition-colors" 
+            className="w-full text-sm text-[#6B6560] file:mr-4 file:py-2.5 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-[#F6F4F1] file:text-[#1C1B19] hover:file:bg-[#E8E4DF] transition-colors" 
           />
         </div>
         
-        <div className="pt-4 border-t border-gray-100">
+        <div className="pt-4 border-t border-[#E8E4DF]">
           <button 
             onClick={guardar} 
             disabled={guardando} 
-            className="w-full sm:w-auto px-8 py-3 bg-[#4F46E5] hover:bg-[#4338CA] text-white text-sm font-medium rounded-lg shadow-sm hover:shadow-md transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto px-8 py-3 bg-[#C45C26] hover:bg-[#A34B1E] text-white text-sm font-medium rounded-xl shadow-sm hover:shadow-md transition-all disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {guardando ? "Guardando..." : "Guardar cambios"}
           </button>

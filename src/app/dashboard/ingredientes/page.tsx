@@ -82,33 +82,33 @@ export default function IngredientesPage() {
     <div className="max-w-2xl">
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6">
         <div>
-          <p className="text-xs uppercase tracking-widest text-green-800">Paso 1</p>
+          <p className="text-xs uppercase tracking-widest text-[#C45C26]">Paso 1</p>
           <h1 className="text-2xl sm:text-3xl font-semibold mt-1">Lo que compras</h1>
-          <p className="text-stone-500 mt-1 text-sm">Cuánto cuesta cada gramo.</p>
+          <p className="text-[#6B6560] mt-1 text-sm">Cuánto cuesta cada gramo.</p>
         </div>
-        <a href="/dashboard/ingredientes/nuevo" className="px-4 py-2.5 bg-green-800 text-white text-sm rounded-xl text-center">+ Agregar</a>
+        <a href="/dashboard/ingredientes/nuevo" className="px-4 py-2.5 bg-[#C45C26] text-white hover:bg-[#A34B1E] text-sm rounded-xl text-center">+ Agregar</a>
       </div>
       <div className="flex flex-wrap gap-2 mb-6">
-        <a href="/dashboard/ingredientes/plantilla" className="px-4 py-2 border border-stone-200 rounded-xl text-sm">Bajar plantilla</a>
-        <a href="/dashboard/ingredientes/subir" className="px-4 py-2 border border-stone-200 rounded-xl text-sm">Subir datos</a>
-        <button onClick={actualizar} className="px-4 py-2 border border-stone-200 rounded-xl text-sm">{actualizando ? "Actualizando..." : "Actualizar costos"}</button>
+        <a href="/dashboard/ingredientes/plantilla" className="px-4 py-2 border border-[#E8E4DF] rounded-xl text-sm">Bajar plantilla</a>
+        <a href="/dashboard/ingredientes/subir" className="px-4 py-2 border border-[#E8E4DF] rounded-xl text-sm">Subir datos</a>
+        <button onClick={actualizar} className="px-4 py-2 border border-[#E8E4DF] rounded-xl text-sm">{actualizando ? "Actualizando..." : "Actualizar costos"}</button>
       </div>
-      <div className="bg-white border border-stone-200 rounded-2xl overflow-hidden">
+      <div className="bg-white border border-[#E8E4DF] rounded-2xl overflow-hidden">
         {items.map((ing) => {
           const g = gramo(ing, rendimientos[ing.id] || 0);
           return (
-            <div key={ing.id} className="px-4 sm:px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-stone-100 last:border-0 gap-2">
+            <div key={ing.id} className="px-4 sm:px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-[#E8E4DF] last:border-0 gap-2">
               <div>
                 <p className="font-medium capitalize">{ing.nombre}</p>
-                <p className="text-xs text-stone-400 mt-0.5">Compras {ing.cantidad_compra} {ing.unidad_compra} por {formatCOP(ing.precio_por_unidad)}</p>
+                <p className="text-xs text-[#6B6560] mt-0.5">Compras {ing.cantidad_compra} {ing.unidad_compra} por {formatCOP(ing.precio_por_unidad)}</p>
               </div>
               <div className="flex items-center justify-between sm:justify-end gap-4">
                 <div className="sm:text-right">
-                  <p className="font-semibold">{formatCOP(g.sin)} <span className="font-normal text-stone-500 text-sm">cada gramo</span></p>
-                  <p className="text-sm text-stone-500">{g.con ? formatCOP(g.con) + " cada gramo útil" : "Todavía no lo pesaste"}</p>
+                  <p className="text-lg font-bold text-[#1C1B19]">{formatCOP(g.sin)} <span className="font-normal text-[#6B6560] text-sm">cada gramo</span></p>
+                  <p className="text-sm font-semibold text-[#1C1B19]">{g.con ? formatCOP(g.con) + " cada gramo útil" : "Todavía no lo pesaste"}</p>
                 </div>
-                <a href={"/dashboard/ingredientes/" + ing.id + "/editar"} className="text-sm text-green-800">Corregir</a>
-                <button onClick={() => eliminar(ing.id)} className="text-sm text-stone-400">Quitar</button>
+                <a href={"/dashboard/ingredientes/" + ing.id + "/editar"} className="text-sm font-medium text-[#C45C26]">Corregir</a>
+                <button onClick={() => eliminar(ing.id)} className="text-sm font-medium text-[#C45C26]">Quitar</button>
               </div>
             </div>
           );

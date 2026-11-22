@@ -46,8 +46,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             href={link.href} 
             className={"flex items-center gap-3 px-4 py-2.5 rounded-lg mx-3 transition-colors " + (
               activo 
-                ? "bg-[#4F46E5] text-white shadow-sm" 
-                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                ? "bg-[#C45C26] text-white shadow-sm" 
+                : "text-[#6B6560] hover:bg-[#F6F4F1] hover:text-[#1C1B19]"
             )}
           >
             <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,15 +61,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   );
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] font-sans">
+    <div className="min-h-screen bg-[#F6F4F1] font-sans">
       {/* HEADER MÓVIL */}
-      <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200 sticky top-0 z-30">
-        <button onClick={() => setAbierto(true)} className="p-2 text-gray-600">
+      <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-[#E8E4DF] sticky top-0 z-30">
+        <button onClick={() => setAbierto(true)} className="p-2 text-[#6B6560]">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <span className="font-bold text-gray-900 tracking-tight">MiCocinaPro</span>
+        <span className="font-bold text-[#1C1B19] tracking-tight">MiCocinaPro</span>
         <div className="w-10" />
       </div>
 
@@ -78,25 +78,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="lg:hidden fixed inset-0 z-40">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setAbierto(false)} />
           <div className="absolute left-0 top-0 bottom-0 w-72 bg-white flex flex-col shadow-2xl">
-            <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100">
-              <span className="font-bold text-gray-900">MiCocinaPro</span>
-              <button onClick={() => setAbierto(false)} className="p-2 text-gray-400 hover:text-gray-600">✕</button>
+            <div className="flex items-center justify-between px-4 py-4 border-b border-[#E8E4DF]">
+              <span className="font-bold text-[#1C1B19]">MiCocinaPro</span>
+              <button onClick={() => setAbierto(false)} className="p-2 text-[#6B6560] hover:text-[#1C1B19]">✕</button>
             </div>
             {menu}
-            <button onClick={salir} className="mx-4 mb-6 text-sm text-gray-500 hover:text-red-500 text-left transition-colors">Cerrar sesión</button>
+            <button onClick={salir} className="mx-4 mb-6 text-sm text-[#6B6560] hover:text-red-500 text-left transition-colors">Cerrar sesión</button>
           </div>
         </div>
       )}
 
       {/* SIDEBAR ESCRITORIO */}
-      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-gray-200 flex-col z-20">
+      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-[#E8E4DF] flex-col z-20">
         <div className="px-6 py-6 flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-[#111827] flex items-center justify-center text-white text-xs font-bold">M</div>
-          <span className="font-bold text-gray-900 tracking-tight">MiCocinaPro</span>
+          <div className="w-6 h-6 rounded bg-[#1C1B19] flex items-center justify-center text-white text-xs font-bold">M</div>
+          <span className="font-bold text-[#1C1B19] tracking-tight">MiCocinaPro</span>
         </div>
         {menu}
-        <div className="p-4 border-t border-gray-100">
-          <button onClick={salir} className="w-full text-sm text-gray-500 hover:text-red-500 text-left transition-colors px-2">
+        <div className="p-4 border-t border-[#E8E4DF]">
+          <button onClick={salir} className="w-full text-sm text-[#6B6560] hover:text-red-500 text-left transition-colors px-2">
             {nombre ? "Cerrar sesión" : "Salir"}
           </button>
         </div>

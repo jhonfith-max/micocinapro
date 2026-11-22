@@ -57,18 +57,18 @@ export default function ImprimirIngredientesPage() {
   if (error) return <div className="p-6 text-red-700">{error}</div>;
 
   return (
-    <div className="max-w-3xl bg-white border rounded-xl p-8">
+    <div className="max-w-3xl bg-white border border-[#E8E4DF] rounded-xl p-8">
       <div className="flex justify-between mb-6 print:hidden">
-        <button onClick={() => router.push("/dashboard/ingredientes")} className="text-sm text-gray-500">
+        <button onClick={() => router.push("/dashboard/ingredientes")} className="text-sm text-[#6B6560]">
           Volver a ingredientes
         </button>
-        <button onClick={() => window.print()} className="px-4 py-2 bg-green-700 text-white text-sm rounded-lg">
+        <button onClick={() => window.print()} className="px-4 py-2 bg-[#C45C26] hover:bg-[#A34B1E] text-white text-sm rounded-xl">
           Descargar PDF
         </button>
       </div>
-      <p className="text-xs uppercase tracking-wide text-gray-500">Listado del restaurante</p>
+      <p className="text-xs uppercase tracking-wide text-[#6B6560]">Listado del restaurante</p>
       <h1 className="text-2xl font-bold mb-2">Todos los ingredientes</h1>
-      <p className="text-gray-600 mb-6">{items.length} productos · precio para cocina en gramos o ml</p>
+      <p className="text-[#6B6560] mb-6">{items.length} productos · precio para cocina en gramos o ml</p>
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b text-left">

@@ -73,14 +73,14 @@ export default function EditarPruebaPage() {
   return (
     <div className="max-w-xl">
       <h1 className="text-2xl sm:text-3xl font-semibold mb-6">{nombre || "Editar prueba"}</h1>
-      <form onSubmit={guardar} className="bg-white border border-stone-200 rounded-2xl p-5 sm:p-6 space-y-4">
+      <form onSubmit={guardar} className="bg-white border border-[#E8E4DF] rounded-2xl p-5 sm:p-6 space-y-4">
         <div>
-          <label className="block text-sm text-stone-600 mb-1">¿Cuántos gramos compraste?</label>
-          <input required type="number" value={pesoCompra} onChange={(e) => setPesoCompra(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+          <label className="block text-sm text-[#6B6560] mb-1">¿Cuántos gramos compraste?</label>
+          <input required type="number" value={pesoCompra} onChange={(e) => setPesoCompra(e.target.value)} className="w-full px-4 py-3 border border-[#E8E4DF] rounded-xl" />
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">¿Cuántos gramos quedan después de limpiar?</label>
-          <input required type="number" value={pesoLimpio} onChange={(e) => setPesoLimpio(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+          <label className="block text-sm text-[#6B6560] mb-1">¿Cuántos gramos quedan después de limpiar?</label>
+          <input required type="number" value={pesoLimpio} onChange={(e) => setPesoLimpio(e.target.value)} className="w-full px-4 py-3 border border-[#E8E4DF] rounded-xl" />
         </div>
         <div className="flex items-center gap-3">
           <input type="checkbox" id="cocina" checked={cocina} onChange={(e) => setCocina(e.target.checked)} />
@@ -88,8 +88,8 @@ export default function EditarPruebaPage() {
         </div>
         {cocina && (
           <div>
-            <label className="block text-sm text-stone-600 mb-1">¿Cuántos gramos quedan después de cocinar?</label>
-            <input required type="number" value={pesoCocido} onChange={(e) => setPesoCocido(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+            <label className="block text-sm text-[#6B6560] mb-1">¿Cuántos gramos quedan después de cocinar?</label>
+            <input required type="number" value={pesoCocido} onChange={(e) => setPesoCocido(e.target.value)} className="w-full px-4 py-3 border border-[#E8E4DF] rounded-xl" />
           </div>
         )}
         <div className="flex items-center gap-3">
@@ -99,20 +99,20 @@ export default function EditarPruebaPage() {
         {mermaUtil && (
           <>
             <div>
-              <label className="block text-sm text-stone-600 mb-1">Nombre de la merma</label>
-              <input required value={nombreMerma} onChange={(e) => setNombreMerma(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+              <label className="block text-sm text-[#6B6560] mb-1">Nombre de la merma</label>
+              <input required value={nombreMerma} onChange={(e) => setNombreMerma(e.target.value)} className="w-full px-4 py-3 border border-[#E8E4DF] rounded-xl" />
             </div>
             <div>
-              <label className="block text-sm text-stone-600 mb-1">¿Cuántos gramos de merma útil?</label>
-              <input required type="number" value={gramosMerma} onChange={(e) => setGramosMerma(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+              <label className="block text-sm text-[#6B6560] mb-1">¿Cuántos gramos de merma útil?</label>
+              <input required type="number" value={gramosMerma} onChange={(e) => setGramosMerma(e.target.value)} className="w-full px-4 py-3 border border-[#E8E4DF] rounded-xl" />
             </div>
           </>
         )}
         {rendimiento > 0 && <p className="text-sm">Queda el <span className="font-semibold">{rendimiento}%</span></p>}
         {error && <p className="text-sm text-red-600">{error}</p>}
         <div className="flex gap-3">
-          <button disabled={loading} className="px-6 py-3.5 bg-green-800 text-white rounded-xl">{loading ? "Guardando..." : "Guardar"}</button>
-          <button type="button" onClick={eliminar} className="px-6 py-3.5 border border-stone-200 rounded-xl">Eliminar</button>
+          <button disabled={loading} className="px-6 py-3.5 bg-[#C45C26] text-white hover:bg-[#A34B1E] rounded-xl">{loading ? "Guardando..." : "Guardar"}</button>
+          <button type="button" onClick={eliminar} className="px-6 py-3.5 border border-[#E8E4DF] rounded-xl">Eliminar</button>
         </div>
       </form>
     </div>

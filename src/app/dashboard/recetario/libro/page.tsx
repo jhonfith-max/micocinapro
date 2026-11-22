@@ -73,25 +73,25 @@ function LibroInner() {
   }, []);
 
   if (error) return <div className="p-6 text-red-700">{error}</div>;
-  if (recipes.length === 0) return <div className="p-6 text-gray-500">Cargando recetario...</div>;
+  if (recipes.length === 0) return <div className="p-6 text-[#6B6560]">Cargando recetario...</div>;
 
   return (
     <div className="max-w-3xl">
       <div className="flex justify-between mb-6 print:hidden">
-        <button onClick={() => router.push("/dashboard/recetario")} className="text-sm text-gray-500">Volver al recetario</button>
-        <button onClick={() => window.print()} className="px-4 py-2 bg-green-700 text-white text-sm rounded-lg">Descargar PDF</button>
+        <button onClick={() => router.push("/dashboard/recetario")} className="text-sm text-[#6B6560]">Volver al recetario</button>
+        <button onClick={() => window.print()} className="px-4 py-2 bg-[#C45C26] hover:bg-[#A34B1E] text-white text-sm rounded-xl">Descargar PDF</button>
       </div>
-      <p className="text-xs uppercase tracking-wide text-gray-500">{esDueno ? "Libro con costos" : "Libro para cocina"}</p>
+      <p className="text-xs uppercase tracking-wide text-[#6B6560]">{esDueno ? "Libro con costos" : "Libro para cocina"}</p>
       <h1 className="text-2xl font-bold mb-8">MiCocinaPro</h1>
       {recipes.map((recipe) => (
-        <section key={recipe.id} className="bg-white border rounded-xl p-6 mb-6">
-          <p className="text-xs uppercase text-gray-500">{recipe.es_preparacion ? "Sub-receta" : "Plato"}</p>
+        <section key={recipe.id} className="bg-white border border-[#E8E4DF] rounded-xl p-6 mb-6">
+          <p className="text-xs uppercase text-[#6B6560]">{recipe.es_preparacion ? "Sub-receta" : "Plato"}</p>
           <h2 className="text-xl font-bold">{recipe.nombre}</h2>
-          <p className="text-gray-600 mb-4">{recipe.porciones} porcion(es)</p>
+          <p className="text-[#6B6560] mb-4">{recipe.porciones} porcion(es)</p>
           {esDueno && (
-            <p className="text-sm mb-3">
+            <p className="text-base font-bold text-[#1C1B19] mb-3">
               Costo porcion {formatCOP(recipe.costo_porcion)}
-              {recipe.food_cost > 0 ? " · Food cost " + recipe.food_cost + "%" : ""}
+              {recipe.food_cost > 0 ? <span className="text-[#C45C26]"> · Food cost {recipe.food_cost}%</span> : ""}
               {recipe.precio_venta ? " · Venta " + formatCOP(recipe.precio_venta) : ""}
             </p>
           )}
@@ -120,7 +120,7 @@ function LibroInner() {
               ))}
             </tbody>
           </table>
-          {recipe.instrucciones && <p className="text-sm whitespace-pre-line text-gray-700">{recipe.instrucciones}</p>}
+          {recipe.instrucciones && <p className="text-sm whitespace-pre-line text-[#1C1B19]">{recipe.instrucciones}</p>}
         </section>
       ))}
     </div>

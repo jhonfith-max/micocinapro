@@ -64,17 +64,17 @@ export default function SubirIngredientesPage() {
 
   return (
     <div className="max-w-xl">
-      <p className="text-sm text-green-700 font-medium">Paso 1 de 4</p>
+      <p className="text-sm text-[#C45C26] font-medium">Paso 1 de 4</p>
       <h1 className="text-2xl font-bold mb-2">Subir ingredientes</h1>
-      <p className="text-gray-600 mb-6">
+      <p className="text-[#6B6560] mb-6">
         Descarga la plantilla, llenala en Excel y subela. Una fila por producto.
       </p>
-      <a href="/dashboard/ingredientes" className="text-sm text-gray-500">Volver</a>
-      <div className="bg-white border rounded-xl p-6 mt-4 space-y-4">
-        <p className="text-sm text-gray-700">
+      <a href="/dashboard/ingredientes" className="text-sm text-[#6B6560]">Volver</a>
+      <div className="bg-white border border-[#E8E4DF] rounded-xl p-6 mt-4 space-y-4">
+        <p className="text-sm text-[#1C1B19]">
           Columnas, separadas por punto y coma: nombre; unidad; precio; cantidad. Unidad: kg, g, litro, ml o unidad.
         </p>
-        <p className="text-sm text-gray-500">Ejemplo: cebolla; kg; 7000; 1</p>
+        <p className="text-sm text-[#6B6560]">Ejemplo: cebolla; kg; 7000; 1</p>
         <input
           type="file"
           accept=".csv,text/csv"
@@ -85,8 +85,8 @@ export default function SubirIngredientesPage() {
           }}
           className="block w-full text-sm"
         />
-        {loading && <p className="text-sm text-gray-500">Cargando...</p>}
-        {mensaje && <p className="text-sm text-green-700">{mensaje}</p>}
+        {loading && <p className="text-sm text-[#6B6560]">Cargando...</p>}
+        {mensaje && <p className="text-sm text-[#C45C26]">{mensaje}</p>}
         {error && <p className="text-sm text-red-600">{error}</p>}
       </div>
     </div>

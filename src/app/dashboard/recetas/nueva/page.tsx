@@ -104,39 +104,39 @@ export default function NuevaRecetaPage() {
       <h1 className="text-2xl font-semibold mb-6">Nueva receta</h1>
       <form onSubmit={guardar} className="space-y-4">
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Nombre</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Nombre</label>
           <input required value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} className="w-full px-4 py-2.5 border rounded-lg" />
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Porciones</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Porciones</label>
           <input type="number" value={form.porciones} onChange={(e) => setForm({ ...form, porciones: e.target.value })} className="w-full px-4 py-2.5 border rounded-lg" />
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Precio de venta</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Precio de venta</label>
           <input type="number" value={form.precio_venta} onChange={(e) => setForm({ ...form, precio_venta: e.target.value })} className="w-full px-4 py-2.5 border rounded-lg" />
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Peso final aproximado (g)</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Peso final aproximado (g)</label>
           <input type="number" value={form.peso_porcion} onChange={(e) => setForm({ ...form, peso_porcion: e.target.value })} className="w-full px-4 py-2.5 border rounded-lg" />
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Foto del plato</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Foto del plato</label>
           <input type="file" accept="image/*" onChange={(e) => setFoto(e.target.files?.[0] || null)} className="w-full text-sm" />
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Agregar ingrediente</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Agregar ingrediente</label>
           <input value={busqueda} onChange={(e) => setBusqueda(e.target.value)} placeholder="Buscar ingrediente..." className="w-full px-4 py-2.5 border rounded-lg" />
           {busqueda && filtrados.length > 0 && (
             <div className="border rounded-lg mt-1 max-h-40 overflow-auto">
               {filtrados.map((i) => (
-                <button type="button" key={i.id} onClick={() => { setSeleccionado(i); setBusqueda(i.nombre); }} className="block w-full text-left px-3 py-2 hover:bg-stone-50 text-sm">{i.nombre}{i.rendimiento ? ` (${i.rendimiento}%)` : ""}</button>
+                <button type="button" key={i.id} onClick={() => { setSeleccionado(i); setBusqueda(i.nombre); }} className="block w-full text-left px-3 py-2 hover:bg-[#F6F4F1] text-sm">{i.nombre}{i.rendimiento ? ` (${i.rendimiento}%)` : ""}</button>
               ))}
             </div>
           )}
           {seleccionado && seleccionado.rendimiento && (
             <div className="flex gap-2 mt-2">
-              <button type="button" onClick={() => setTipoUso("crudo")} className={`px-3 py-1 text-sm rounded ${tipoUso === "crudo" ? "bg-green-800 text-white" : "bg-stone-100"}`}>Como lo compré</button>
-              <button type="button" onClick={() => setTipoUso("limpio")} className={`px-3 py-1 text-sm rounded ${tipoUso === "limpio" ? "bg-green-800 text-white" : "bg-stone-100"}`}>Ya limpio ({seleccionado.rendimiento}%)</button>
+              <button type="button" onClick={() => setTipoUso("crudo")} className={`px-3 py-1 text-sm rounded ${tipoUso === "crudo" ? "bg-[#C45C26] text-white hover:bg-[#A34B1E]" : "bg-[#F6F4F1]"}`}>Como lo compré</button>
+              <button type="button" onClick={() => setTipoUso("limpio")} className={`px-3 py-1 text-sm rounded ${tipoUso === "limpio" ? "bg-[#C45C26] text-white hover:bg-[#A34B1E]" : "bg-[#F6F4F1]"}`}>Ya limpio ({seleccionado.rendimiento}%)</button>
             </div>
           )}
           {seleccionado && (
@@ -145,57 +145,57 @@ export default function NuevaRecetaPage() {
               <select value={unidad} onChange={(e) => setUnidad(e.target.value)} className="px-3 py-2 border rounded-lg">
                 <option value="g">g</option><option value="ml">ml</option><option value="unidad">unidad</option>
               </select>
-              <button type="button" onClick={agregarIng} className="px-4 py-2 bg-green-800 text-white rounded-lg text-sm">Agregar</button>
+              <button type="button" onClick={agregarIng} className="px-4 py-2 bg-[#C45C26] text-white hover:bg-[#A34B1E] rounded-xl text-sm">Agregar</button>
             </div>
           )}
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Agregar subreceta</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Agregar subreceta</label>
           <input value={busquedaPrep} onChange={(e) => setBusquedaPrep(e.target.value)} placeholder="Buscar subreceta..." className="w-full px-4 py-2.5 border rounded-lg" />
           {busquedaPrep && filtradosPrep.length > 0 && (
             <div className="border rounded-lg mt-1 max-h-40 overflow-auto">
               {filtradosPrep.map((p) => (
-                <button type="button" key={p.id} onClick={() => { setSeleccionadoPrep(p); setBusquedaPrep(p.nombre); }} className="block w-full text-left px-3 py-2 hover:bg-stone-50 text-sm">{p.nombre}</button>
+                <button type="button" key={p.id} onClick={() => { setSeleccionadoPrep(p); setBusquedaPrep(p.nombre); }} className="block w-full text-left px-3 py-2 hover:bg-[#F6F4F1] text-sm">{p.nombre}</button>
               ))}
             </div>
           )}
           {seleccionadoPrep && (
             <div className="flex gap-2 mt-2">
               <input type="number" value={cantidadPrep} onChange={(e) => setCantidadPrep(e.target.value)} placeholder="Porciones" className="flex-1 px-3 py-2 border rounded-lg" />
-              <button type="button" onClick={agregarPrep} className="px-4 py-2 bg-green-800 text-white rounded-lg text-sm">Agregar</button>
+              <button type="button" onClick={agregarPrep} className="px-4 py-2 bg-[#C45C26] text-white hover:bg-[#A34B1E] rounded-xl text-sm">Agregar</button>
             </div>
           )}
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Qué lleva</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Qué lleva</label>
           {items.map((item, i) => (
             <div key={"i" + i} className="flex justify-between items-center py-1 text-sm border-b">
               <span>{item.nombre}: {item.cantidad} {item.unidad} {item.tipo_uso === "limpio" ? "(limpio)" : ""}</span>
-              <div className="flex items-center gap-2"><span>{formatCOP(item.costo)}</span><button type="button" onClick={() => quitarIng(i)} className="text-stone-400">×</button></div>
+              <div className="flex items-center gap-2"><span>{formatCOP(item.costo)}</span><button type="button" onClick={() => quitarIng(i)} className="text-[#6B6560]">×</button></div>
             </div>
           ))}
           {prepItems.map((item, i) => (
             <div key={"p" + i} className="flex justify-between items-center py-1 text-sm border-b">
               <span>{item.nombre}: {item.cantidad} porción</span>
-              <div className="flex items-center gap-2"><span>{formatCOP(item.costo)}</span><button type="button" onClick={() => quitarPrep(i)} className="text-stone-400">×</button></div>
+              <div className="flex items-center gap-2"><span>{formatCOP(item.costo)}</span><button type="button" onClick={() => quitarPrep(i)} className="text-[#6B6560]">×</button></div>
             </div>
           ))}
           <p className="mt-2 text-sm font-medium">Costo total: {formatCOP(costoTotal)}</p>
           {form.precio_venta && <p className="text-sm">Food cost: {foodCost}%</p>}
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Instrucciones</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Instrucciones</label>
           <textarea value={form.instrucciones} onChange={(e) => setForm({ ...form, instrucciones: e.target.value })} rows={4} className="w-full px-4 py-2.5 border rounded-lg" />
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Alérgenos</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Alérgenos</label>
           <input type="text" value={form.alergenos} onChange={(e) => setForm({ ...form, alergenos: e.target.value })} placeholder="Ej: Contiene lácteos, gluten" className="w-full px-4 py-2.5 border rounded-lg" />
         </div>
         <div>
-          <label className="block text-sm text-stone-600 mb-1">Puntos Críticos (PCC)</label>
+          <label className="block text-sm text-[#6B6560] mb-1">Puntos Críticos (PCC)</label>
           <input type="text" value={form.pcc} onChange={(e) => setForm({ ...form, pcc: e.target.value })} placeholder="Ej: Centro de la carne a 75°C" className="w-full px-4 py-2.5 border rounded-lg" />
         </div>
-        <button disabled={loading} className="px-6 py-3 bg-green-800 text-white rounded-lg">{loading ? "Guardando..." : "Guardar"}</button>
+        <button disabled={loading} className="px-6 py-3 bg-[#C45C26] text-white hover:bg-[#A34B1E] rounded-xl">{loading ? "Guardando..." : "Guardar"}</button>
       </form>
     </div>
   );

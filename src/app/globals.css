@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --primary: #166534; /* Verde profesional */
-  --primary-hover: #14532d;
-  --accent: #ea580c; /* Naranja/terracota */
+  --background: #F6F4F1;
+  --foreground: #1C1B19;
+  --primary: #C45C26;
+  --primary-hover: #A34B1E;
+  --accent: #C45C26;
   --card: #ffffff;
-  --border: #e2e8f0;
-  --muted: #64748b;
+  --border: #E8E4DF;
+  --muted: #6B6560;
 }
 
 @theme inline {

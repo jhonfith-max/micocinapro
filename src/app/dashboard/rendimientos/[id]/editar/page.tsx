@@ -19,8 +19,8 @@ export default function EditarPruebaPage() {
   const [pesoPorcion, setPesoPorcion] = useState("");
   const [partes, setPartes] = useState<Parte[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const tecla = "px-5 py-2.5 bg-green-700 text-white rounded-lg shadow-[0_4px_0_0_#166534] active:translate-y-1 active:shadow-none transition-all";
-  const teclaSuave = "px-4 py-2.5 border border-gray-300 rounded-lg shadow-[0_4px_0_0_#d1d5db] active:translate-y-1 active:shadow-none transition-all disabled:opacity-40";
+  const tecla = "px-5 py-2.5 bg-[#C45C26] hover:bg-[#A34B1E] text-white rounded-xl shadow-[0_4px_0_0_#A34B1E] active:translate-y-1 active:shadow-none transition-all";
+  const teclaSuave = "px-4 py-2.5 border border-[#E8E4DF] text-[#1C1B19] rounded-xl shadow-[0_4px_0_0_#E8E4DF] active:translate-y-1 active:shadow-none transition-all disabled:opacity-40";
 
   useEffect(() => {
     const load = async () => {
@@ -113,7 +113,7 @@ export default function EditarPruebaPage() {
           </div>
         );
       })}
-      <button type="button" onClick={() => setPartes([...partes, { nombre: "", gramos: "", se_usa: true, momento }])} className="text-sm text-green-800">+ Agregar parte</button>
+      <button type="button" onClick={() => setPartes([...partes, { nombre: "", gramos: "", se_usa: true, momento }])} className="text-sm text-[#C45C26]">+ Agregar parte</button>
     </div>
   );
 
@@ -121,13 +121,13 @@ export default function EditarPruebaPage() {
     <div className="max-w-2xl">
       <div className="flex items-center justify-between mb-4">
         <button type="button" disabled={!anterior} onClick={() => router.push("/dashboard/rendimientos/" + anterior + "/editar")} className={teclaSuave}>Anterior</button>
-        <p className="text-sm text-gray-500">{indice + 1} de {ids.length}</p>
+        <p className="text-sm text-[#6B6560]">{indice + 1} de {ids.length}</p>
         <button type="button" disabled={!siguiente} onClick={() => router.push("/dashboard/rendimientos/" + siguiente + "/editar")} className={teclaSuave}>Siguiente</button>
       </div>
-      <p className="text-sm text-green-700">Prueba de</p>
+      <p className="text-sm text-[#C45C26]">Prueba de</p>
       <h1 className="text-2xl font-bold mb-2">{producto || "Cargando..."}</h1>
-      <p className="text-gray-600 mb-6">Puedes cambiar los pesos, si se cocina y lo que sobró.</p>
-      <form onSubmit={guardar} className="bg-white border border-gray-300 rounded-xl p-6 space-y-5 shadow-[0_4px_0_0_#d1d5db]">
+      <p className="text-[#6B6560] mb-6">Puedes cambiar los pesos, si se cocina y lo que sobró.</p>
+      <form onSubmit={guardar} className="bg-white border border-[#E8E4DF] rounded-xl p-6 space-y-5 shadow-[0_4px_0_0_#E8E4DF]">
         <div>
           <label className="block text-sm font-medium mb-1">¿Cuánto pesaba al comprarlo?</label>
           <input required type="number" value={pesoInicial} onChange={(e) => setPesoInicial(e.target.value)} className="w-full px-3 py-2.5 border rounded-lg" />
@@ -140,8 +140,8 @@ export default function EditarPruebaPage() {
         <div>
           <p className="font-medium mb-2">¿Lo cocinas antes de utilizarlo?</p>
           <div className="grid grid-cols-2 gap-2">
-            <button type="button" onClick={() => setCoccion("crudo")} className={"px-3 py-2.5 rounded-lg border " + (coccion === "crudo" ? "bg-green-700 text-white" : "bg-white")}>Lo utilizo crudo</button>
-            <button type="button" onClick={() => setCoccion("cocido")} className={"px-3 py-2.5 rounded-lg border " + (coccion === "cocido" ? "bg-green-700 text-white" : "bg-white")}>Lo cocino y después lo utilizo</button>
+            <button type="button" onClick={() => setCoccion("crudo")} className={"px-3 py-2.5 rounded-lg border " + (coccion === "crudo" ? "bg-[#C45C26] text-white hover:bg-[#A34B1E]" : "bg-white")}>Lo utilizo crudo</button>
+            <button type="button" onClick={() => setCoccion("cocido")} className={"px-3 py-2.5 rounded-lg border " + (coccion === "cocido" ? "bg-[#C45C26] text-white hover:bg-[#A34B1E]" : "bg-white")}>Lo cocino y después lo utilizo</button>
           </div>
         </div>
         {coccion === "cocido" && (
@@ -155,7 +155,7 @@ export default function EditarPruebaPage() {
           <input type="number" value={pesoPorcion} onChange={(e) => setPesoPorcion(e.target.value)} className="w-full px-3 py-2.5 border rounded-lg" />
         </div>
         {bloque("porcion", "Lo que sobró al porcionar")}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm">
+        <div className="bg-[#F6F4F1] border border-[#E8E4DF] rounded-lg p-4 text-sm">
           <p>De lo que compraste, llega al plato el <strong>{rendimiento}%</strong>.</p>
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}

@@ -44,8 +44,8 @@ export default function LoginPage() {
     <div 
       className="min-h-screen w-full flex flex-col p-4 sm:p-8 lg:p-12 font-sans overflow-hidden" 
       style={{ 
-        backgroundColor: "#FAF9F6", // Crema muy limpio
-        backgroundImage: "radial-gradient(circle, #E8E6E1 1px, transparent 1px)", 
+        backgroundColor: "#F6F4F1", // Crema muy limpio
+        backgroundImage: "radial-gradient(circle, #E8E4DF 1px, transparent 1px)", 
         backgroundSize: "24px 24px" 
       }}
     >
@@ -66,12 +66,12 @@ export default function LoginPage() {
       {/* HEADER */}
       <div className="mb-8 lg:mb-12 text-center flex flex-col items-center drop-in" style={{ animationDelay: "0.1s" }}>
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-7 h-7 rounded bg-[#111827] flex items-center justify-center text-white text-sm font-bold shadow-md">M</div>
-          <p className="text-sm font-semibold tracking-widest text-[#4A4A4A] uppercase">MiCocinaPro</p>
+          <div className="w-7 h-7 rounded bg-[#1C1B19] flex items-center justify-center text-white text-sm font-bold shadow-md">M</div>
+          <p className="text-sm font-semibold tracking-widest text-[#6B6560] uppercase">MiCocinaPro</p>
         </div>
         <h1 
           className="text-2xl sm:text-4xl lg:text-5xl leading-[1.15] max-w-4xl mx-auto" 
-          style={{ fontFamily: "Playfair Display, serif", color: "#1A1A1A" }}
+          style={{ fontFamily: "Playfair Display, serif", color: "#1C1B19" }}
         >
           El error que quiebra a los restaurantes no es la comida, es no saber cuánto cuesta.
         </h1>
@@ -96,16 +96,16 @@ export default function LoginPage() {
                   />
                 )}
 
-                <span className="absolute top-4 right-4 text-lg text-[#A0522D] opacity-80 -rotate-3" style={{ fontFamily: "Caveat, cursive" }}>
+                <span className="absolute top-4 right-4 text-lg text-[#C45C26] opacity-80 -rotate-3" style={{ fontFamily: "Caveat, cursive" }}>
                   {p.nota}
                 </span>
 
-                <p className="text-lg font-bold text-[#2C2C2C] mt-6 pr-12">{p.titulo}</p>
-                <p className="mt-2 text-sm text-[#5A5A5A] leading-relaxed">{p.texto}</p>
+                <p className="text-lg font-bold text-[#1C1B19] mt-6 pr-12">{p.titulo}</p>
+                <p className="mt-2 text-sm text-[#6B6560] leading-relaxed">{p.texto}</p>
                 
                 <div className="mt-auto pt-6 flex justify-between items-end relative z-0">
                   <p 
-                    className="text-[4.5rem] leading-none font-light text-[#1A1A1A] opacity-[0.06] select-none -ml-2" 
+                    className="text-[4.5rem] leading-none font-light text-[#1C1B19] opacity-[0.06] select-none -ml-2" 
                     style={{ fontFamily: "Playfair Display, serif" }}
                   >
                     {p.n}
@@ -122,36 +122,36 @@ export default function LoginPage() {
             <div className="relative w-full min-h-[340px] paper-texture border border-[#D1C9B6] rounded-sm p-6 pt-9 flex flex-col shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
               <Cinta />
               
-              <div className="absolute top-3 right-3 text-[#A0522D] flex items-center gap-1 z-20 bg-white/50 px-2 py-1 rounded backdrop-blur-sm" style={{ fontFamily: "Caveat, cursive", fontSize: "19px" }}>
+              <div className="absolute top-3 right-3 text-[#C45C26] flex items-center gap-1 z-20 bg-white/50 px-2 py-1 rounded backdrop-blur-sm" style={{ fontFamily: "Caveat, cursive", fontSize: "19px" }}>
                 <span>📎</span> Tu cocina te espera
               </div>
               
-              <h1 className="text-xl font-bold text-[#2C2C2C] mt-2">Entrar</h1>
-              <p className="mt-1 text-xs text-[#5A5A5A]">El costo de cada plato, claro y en orden.</p>
+              <h1 className="text-xl font-bold text-[#1C1B19] mt-2">Entrar</h1>
+              <p className="mt-1 text-xs text-[#6B6560]">El costo de cada plato, claro y en orden.</p>
               
               {error && <p className="mt-2 text-xs text-red-500 font-medium">{error}</p>}
               
               <form onSubmit={entrar} className="mt-5 flex-1 flex flex-col">
                 <div className="space-y-4 flex-1">
                   <div>
-                    <label className="block text-xs font-semibold text-[#4A4A4A] mb-1">Correo</label>
+                    <label className="block text-xs font-semibold text-[#6B6560] mb-1">Correo</label>
                     <input 
                       required 
                       type="email" 
                       value={email} 
                       onChange={(e) => setEmail(e.target.value)} 
-                      className="w-full px-3 py-2.5 bg-[#FAFAFA] border border-[#E5E5E5] rounded-md text-sm text-[#1A1A1A] placeholder-[#A09A8D] focus:bg-white focus:ring-2 focus:ring-[#4F46E5]/20 focus:border-[#4F46E5] focus:outline-none transition-colors" 
+                      className="w-full px-3 py-2.5 bg-[#FAFAFA] border border-[#E8E4DF] rounded-md text-sm text-[#1C1B19] placeholder-[#A09A8D] focus:bg-white focus:ring-2 focus:ring-[#C45C26]/20 focus:border-[#C45C26] focus:outline-none transition-colors" 
                       placeholder="chef@restaurante.com"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[#4A4A4A] mb-1">Contraseña</label>
+                    <label className="block text-xs font-semibold text-[#6B6560] mb-1">Contraseña</label>
                     <input 
                       required 
                       type="password" 
                       value={password} 
                       onChange={(e) => setPassword(e.target.value)} 
-                      className="w-full px-3 py-2.5 bg-[#FAFAFA] border border-[#E5E5E5] rounded-md text-sm text-[#1A1A1A] placeholder-[#A09A8D] focus:bg-white focus:ring-2 focus:ring-[#4F46E5]/20 focus:border-[#4F46E5] focus:outline-none transition-colors" 
+                      className="w-full px-3 py-2.5 bg-[#FAFAFA] border border-[#E8E4DF] rounded-md text-sm text-[#1C1B19] placeholder-[#A09A8D] focus:bg-white focus:ring-2 focus:ring-[#C45C26]/20 focus:border-[#C45C26] focus:outline-none transition-colors" 
                       placeholder="••••••••"
                     />
                   </div>
@@ -159,7 +159,7 @@ export default function LoginPage() {
                 
                 <button 
                   disabled={loading} 
-                  className="mt-6 w-full py-2.5 rounded-md text-white text-sm font-medium transition-all bg-[#4F46E5] hover:bg-[#4338CA] hover:shadow-lg hover:shadow-indigo-500/30 disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="mt-6 w-full py-2.5 rounded-md text-white text-sm font-medium transition-all bg-[#C45C26] hover:bg-[#A34B1E] hover:shadow-lg hover:shadow-[#C45C26]/25 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {loading ? "Entrando..." : "Entrar y costear ahora"}
                 </button>
@@ -167,7 +167,7 @@ export default function LoginPage() {
                 <button 
                   type="button" 
                   onClick={() => router.push("/register")} 
-                  className="mt-3 text-xs text-[#5A5A5A] hover:text-[#1A1A1A] font-medium transition-colors"
+                  className="mt-3 text-xs text-[#6B6560] hover:text-[#1C1B19] font-medium transition-colors"
                 >
                   Crear cuenta nueva
                 </button>
@@ -180,7 +180,7 @@ export default function LoginPage() {
 
       {/* FOOTER */}
       <div className="mt-4 lg:mt-8 text-center drop-in" style={{ animationDelay: "0.6s" }}>
-        <p className="text-xs text-[#5A5A5A] font-medium">
+        <p className="text-xs text-[#6B6560] font-medium">
           Deja de usar Excel. MiCocinaPro conecta tus compras con tu carta en 4 pasos.
         </p>
       </div>

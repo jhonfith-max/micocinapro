@@ -63,22 +63,22 @@ function FichaInner() {
   }, [id]);
 
   if (error) return <div className="p-6 text-red-700">{error}</div>;
-  if (!recipe) return <div className="p-6 text-gray-500">Cargando ficha...</div>;
+  if (!recipe) return <div className="p-6 text-[#6B6560]">Cargando ficha...</div>;
 
   return (
-    <div className="max-w-3xl bg-white border rounded-xl p-8">
+    <div className="max-w-3xl bg-white border border-[#E8E4DF] rounded-xl p-8">
       <div className="flex justify-between mb-6 print:hidden">
-        <button onClick={() => router.push("/dashboard/recetario")} className="text-sm text-gray-500">Volver al recetario</button>
-        <button onClick={() => window.print()} className="px-4 py-2 bg-green-700 text-white text-sm rounded-lg">Descargar PDF</button>
+        <button onClick={() => router.push("/dashboard/recetario")} className="text-sm text-[#6B6560]">Volver al recetario</button>
+        <button onClick={() => window.print()} className="px-4 py-2 bg-[#C45C26] hover:bg-[#A34B1E] text-white text-sm rounded-xl">Descargar PDF</button>
       </div>
-      <p className="text-xs uppercase tracking-wide text-gray-500">{esDueno ? "Ficha con costos" : "Ficha para cocina"} · {recipe.es_preparacion ? "Sub-receta" : "Plato"}</p>
+      <p className="text-xs uppercase tracking-wide text-[#6B6560]">{esDueno ? "Ficha con costos" : "Ficha para cocina"} · {recipe.es_preparacion ? "Sub-receta" : "Plato"}</p>
       <h1 className="text-2xl font-bold mt-1">{recipe.nombre}</h1>
-      <p className="text-gray-600 mb-4">{recipe.porciones} porcion(es)</p>
+      <p className="text-[#6B6560] mb-4">{recipe.porciones} porcion(es)</p>
       {esDueno && (
         <div className="grid grid-cols-3 gap-3 border rounded-lg p-4 mb-4 text-sm">
-          <div><p className="text-gray-500">Costo / porcion</p><p className="font-semibold">{formatCOP(recipe.costo_porcion)}</p></div>
-          <div><p className="text-gray-500">Food cost</p><p className="font-semibold">{recipe.food_cost > 0 ? recipe.food_cost + "%" : "—"}</p></div>
-          <div><p className="text-gray-500">Precio venta</p><p className="font-semibold">{recipe.precio_venta ? formatCOP(recipe.precio_venta) : "—"}</p></div>
+          <div><p className="text-[#6B6560]">Costo / porcion</p><p className="text-lg font-bold text-[#1C1B19]">{formatCOP(recipe.costo_porcion)}</p></div>
+          <div><p className="text-[#6B6560]">Food cost</p><p className="text-lg font-bold text-[#C45C26]">{recipe.food_cost > 0 ? recipe.food_cost + "%" : "—"}</p></div>
+          <div><p className="text-[#6B6560]">Precio venta</p><p className="text-lg font-bold text-[#1C1B19]">{recipe.precio_venta ? formatCOP(recipe.precio_venta) : "—"}</p></div>
         </div>
       )}
       <table className="w-full text-sm mb-4">
@@ -106,7 +106,7 @@ function FichaInner() {
           ))}
         </tbody>
       </table>
-      {preps.length === 0 && <p className="text-sm text-gray-500 mb-3">Este plato no tiene sub-receta guardada.</p>}
+      {preps.length === 0 && <p className="text-sm text-[#6B6560] mb-3">Este plato no tiene sub-receta guardada.</p>}
       {recipe.instrucciones && <p className="text-sm whitespace-pre-line">{recipe.instrucciones}</p>}
     </div>
   );

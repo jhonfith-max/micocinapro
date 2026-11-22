@@ -98,36 +98,36 @@ export default function MenusPage() {
       <div className="max-w-2xl">
         <div className="flex items-center gap-2 mb-4">
           {[1, 2, 3, 4].map((n) => (
-            <div key={n} className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${paso >= n ? "bg-green-800 text-white" : "bg-stone-200 text-stone-500"}`}>{n}</div>
+            <div key={n} className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${paso >= n ? "bg-[#C45C26] text-white hover:bg-[#A34B1E]" : "bg-[#E8E4DF] text-[#6B6560]"}`}>{n}</div>
           ))}
         </div>
         <h1 className="text-2xl font-semibold mb-2">{editando ? "Editar" : "Nuevo"} menú corporativo</h1>
-        <p className="text-sm text-stone-500 mb-4">Paso {paso} de 4</p>
+        <p className="text-sm text-[#6B6560] mb-4">Paso {paso} de 4</p>
 
         {paso === 1 && (
           <div className="space-y-4">
-            <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre del menú" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-amber-800">
+            <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre del menú" className="w-full px-4 py-3 border border-[#E8E4DF] rounded-xl" />
+            <div className="bg-[#F6F4F1] border border-[#E8E4DF] rounded-xl p-3 text-sm text-[#6B6560]">
               Si las cantidades son diferentes a la carta, crea un plato nuevo.
             </div>
-            <a href="/dashboard/recetas/nueva" className="inline-block px-4 py-2 bg-green-800 text-white text-sm rounded-xl">+ Crear plato</a>
-            <button onClick={() => setPaso(2)} className="block w-full px-4 py-3 bg-green-800 text-white rounded-xl">Siguiente</button>
+            <a href="/dashboard/recetas/nueva" className="inline-block px-4 py-2 bg-[#C45C26] text-white hover:bg-[#A34B1E] text-sm rounded-xl">+ Crear plato</a>
+            <button onClick={() => setPaso(2)} className="block w-full px-4 py-3 bg-[#C45C26] text-white hover:bg-[#A34B1E] rounded-xl">Siguiente</button>
           </div>
         )}
 
         {paso === 2 && (
           <div className="space-y-4">
-            <div className="bg-white border border-stone-200 rounded-2xl p-4">
+            <div className="bg-white border border-[#E8E4DF] rounded-2xl p-4">
               <p className="font-medium mb-2">Entrada</p>
-              <select onChange={(e) => e.target.value && !entradas.includes(e.target.value) && setEntradas([...entradas, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
+              <select onChange={(e) => e.target.value && !entradas.includes(e.target.value) && setEntradas([...entradas, e.target.value])} className="w-full px-4 py-3 border border-[#E8E4DF] rounded-xl text-sm">
                 <option value="">Agregar entrada</option>
                 {recipes.filter((r) => r.es_preparacion).map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
               </select>
               {entradas.map((id) => <p key={id} className="text-sm mt-2">{recipes.find((r) => r.id === id)?.nombre} <button onClick={() => setEntradas(entradas.filter((x) => x !== id))} className="text-red-500">×</button></p>)}
             </div>
-            <div className="bg-white border border-stone-200 rounded-2xl p-4">
+            <div className="bg-white border border-[#E8E4DF] rounded-2xl p-4">
               <p className="font-medium mb-2">Plato fuerte</p>
-              <select onChange={(e) => e.target.value && !fuertes.includes(e.target.value) && setFuertes([...fuertes, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
+              <select onChange={(e) => e.target.value && !fuertes.includes(e.target.value) && setFuertes([...fuertes, e.target.value])} className="w-full px-4 py-3 border border-[#E8E4DF] rounded-xl text-sm">
                 <option value="">Agregar fuerte</option>
                 {recipes.filter((r) => !r.es_preparacion).map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
               </select>
@@ -135,36 +135,36 @@ export default function MenusPage() {
             </div>
             <div className="flex gap-3">
               <button onClick={() => setPaso(1)} className="px-4 py-3 border rounded-xl">Anterior</button>
-              <button onClick={() => setPaso(3)} className="px-4 py-3 bg-green-800 text-white rounded-xl">Siguiente</button>
+              <button onClick={() => setPaso(3)} className="px-4 py-3 bg-[#C45C26] text-white hover:bg-[#A34B1E] rounded-xl">Siguiente</button>
             </div>
           </div>
         )}
 
         {paso === 3 && (
           <div className="space-y-4">
-            <button onClick={() => setMostrarOpcional(!mostrarOpcional)} className="text-sm text-green-800">
+            <button onClick={() => setMostrarOpcional(!mostrarOpcional)} className="text-sm text-[#C45C26]">
               {mostrarOpcional ? "Ocultar" : "Agregar"} guarnición, postre o bebida
             </button>
             {mostrarOpcional && (
               <>
-                <div className="bg-white border border-stone-200 rounded-2xl p-4">
+                <div className="bg-white border border-[#E8E4DF] rounded-2xl p-4">
                   <p className="font-medium mb-2">Guarnición</p>
-                  <select onChange={(e) => e.target.value && !guarniciones.includes(e.target.value) && setGuarniciones([...guarniciones, e.target.value])} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
+                  <select onChange={(e) => e.target.value && !guarniciones.includes(e.target.value) && setGuarniciones([...guarniciones, e.target.value])} className="w-full px-4 py-3 border border-[#E8E4DF] rounded-xl text-sm">
                     <option value="">Agregar</option>
                     {recipes.filter((r) => r.es_preparacion).map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
                   </select>
                   {guarniciones.map((id) => <p key={id} className="text-sm mt-2">{recipes.find((r) => r.id === id)?.nombre} <button onClick={() => setGuarniciones(guarniciones.filter((x) => x !== id))} className="text-red-500">×</button></p>)}
                 </div>
-                <div className="bg-white border border-stone-200 rounded-2xl p-4">
+                <div className="bg-white border border-[#E8E4DF] rounded-2xl p-4">
                   <p className="font-medium mb-2">Postre</p>
-                  <select value={postre} onChange={(e) => setPostre(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
+                  <select value={postre} onChange={(e) => setPostre(e.target.value)} className="w-full px-4 py-3 border border-[#E8E4DF] rounded-xl text-sm">
                     <option value="">Elegir</option>
                     {recipes.map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
                   </select>
                 </div>
-                <div className="bg-white border border-stone-200 rounded-2xl p-4">
+                <div className="bg-white border border-[#E8E4DF] rounded-2xl p-4">
                   <p className="font-medium mb-2">Bebida</p>
-                  <select value={bebida} onChange={(e) => setBebida(e.target.value)} className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm">
+                  <select value={bebida} onChange={(e) => setBebida(e.target.value)} className="w-full px-4 py-3 border border-[#E8E4DF] rounded-xl text-sm">
                     <option value="">Elegir</option>
                     {recipes.map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
                   </select>
@@ -173,43 +173,43 @@ export default function MenusPage() {
             )}
             <div className="flex gap-3">
               <button onClick={() => setPaso(2)} className="px-4 py-3 border rounded-xl">Anterior</button>
-              <button onClick={() => setPaso(4)} className="px-4 py-3 bg-green-800 text-white rounded-xl">Siguiente</button>
+              <button onClick={() => setPaso(4)} className="px-4 py-3 bg-[#C45C26] text-white hover:bg-[#A34B1E] rounded-xl">Siguiente</button>
             </div>
           </div>
         )}
 
         {paso === 4 && (
           <div className="space-y-4">
-            <div className="bg-stone-50 rounded-2xl p-4 space-y-1 text-sm">
+            <div className="bg-[#F6F4F1] rounded-2xl p-4 space-y-1 text-sm">
               <p className="font-medium mb-2">Resumen</p>
               {entradas.map((id) => <p key={id}>Entrada: {recipes.find((r) => r.id === id)?.nombre}</p>)}
               {fuertes.map((id) => <p key={id}>Fuerte: {recipes.find((r) => r.id === id)?.nombre}</p>)}
               {guarniciones.map((id) => <p key={id}>Guarnición: {recipes.find((r) => r.id === id)?.nombre}</p>)}
             </div>
-            <div className="bg-white border border-stone-200 rounded-2xl p-4">
+            <div className="bg-white border border-[#E8E4DF] rounded-2xl p-4">
               <p className="font-medium mb-2">Instrucciones</p>
-              <textarea value={instrucciones} onChange={(e) => setInstrucciones(e.target.value)} rows={3} placeholder="Cómo se arma el menú" className="w-full px-4 py-3 border border-stone-200 rounded-xl text-sm" />
+              <textarea value={instrucciones} onChange={(e) => setInstrucciones(e.target.value)} rows={3} placeholder="Cómo se arma el menú" className="w-full px-4 py-3 border border-[#E8E4DF] rounded-xl text-sm" />
             </div>
-            <div className="bg-white border border-stone-200 rounded-2xl p-4">
+            <div className="bg-white border border-[#E8E4DF] rounded-2xl p-4">
               <p className="font-medium mb-2">Precio del menú</p>
-              <input type="number" value={precio} onChange={(e) => setPrecio(e.target.value)} placeholder="35000" className="w-full px-4 py-3 border border-stone-200 rounded-xl" />
+              <input type="number" value={precio} onChange={(e) => setPrecio(e.target.value)} placeholder="35000" className="w-full px-4 py-3 border border-[#E8E4DF] rounded-xl" />
             </div>
-            <div className="bg-white border border-stone-200 rounded-2xl p-4">
-              <label className="block text-sm text-stone-600 mb-1.5">Foto</label>
+            <div className="bg-white border border-[#E8E4DF] rounded-2xl p-4">
+              <label className="block text-sm text-[#6B6560] mb-1.5">Foto</label>
               <input type="file" accept="image/*" onChange={(e) => setFoto(e.target.files?.[0] || null)} className="w-full text-sm" />
             </div>
             {costoTotal > 0 && (
-              <div className="bg-stone-50 rounded-2xl p-4 space-y-2 text-sm">
+              <div className="bg-[#F6F4F1] rounded-2xl p-4 space-y-2 text-sm">
                 <div className="flex justify-between"><span>Costo de platos</span><span>{formatCOP(Math.round(costoBase))}</span></div>
-                <div className="flex justify-between"><span>Contingencia 7% <span className="text-xs text-stone-400">(extra por merma y personas que no llegan)</span></span><span>{formatCOP(contingencia)}</span></div>
-                <div className="flex justify-between border-t border-stone-200 pt-2"><span>Costo total</span><span className="font-medium">{formatCOP(costoTotal)}</span></div>
-                <div className="flex justify-between"><span>Precio recomendado (32%)</span><span className="font-semibold">{formatCOP(precioRecomendado)}</span></div>
-                {precio && <div className="flex justify-between"><span>Food cost</span><span className={foodCost > 32 ? "text-red-600" : "text-green-700"}>{foodCost}%</span></div>}
+                <div className="flex justify-between"><span>Contingencia 7% <span className="text-xs text-[#6B6560]">(extra por merma y personas que no llegan)</span></span><span>{formatCOP(contingencia)}</span></div>
+                <div className="flex justify-between border-t border-[#E8E4DF] pt-2"><span>Costo total</span><span className="font-medium">{formatCOP(costoTotal)}</span></div>
+                <div className="flex justify-between"><span>Precio recomendado (32%)</span><span className="text-base font-bold text-[#1C1B19]">{formatCOP(precioRecomendado)}</span></div>
+                {precio && <div className="flex justify-between"><span>Food cost</span><span className={"text-base font-bold " + (foodCost > 32 ? "text-red-600" : "text-[#C45C26]")}>{foodCost}%</span></div>}
               </div>
             )}
             <div className="flex gap-3">
               <button onClick={() => setPaso(3)} className="px-4 py-3 border rounded-xl">Anterior</button>
-              <button onClick={guardar} className="px-4 py-3 bg-green-800 text-white rounded-xl">Guardar</button>
+              <button onClick={guardar} className="px-4 py-3 bg-[#C45C26] text-white hover:bg-[#A34B1E] rounded-xl">Guardar</button>
             </div>
           </div>
         )}
@@ -219,28 +219,28 @@ export default function MenusPage() {
 
   return (
     <div className="max-w-2xl">
-      <p className="text-xs uppercase tracking-widest text-green-800">Si haces almuerzos</p>
+      <p className="text-xs uppercase tracking-widest text-[#C45C26]">Si haces almuerzos</p>
       <h1 className="text-2xl sm:text-3xl font-semibold mt-1">Corporativo</h1>
-      <p className="text-stone-500 mt-1 text-sm">Entrada, fuerte y bebida. Un solo precio.</p>
-      <button onClick={() => { setMostrarForm(true); setEditando(null); setNombre(""); setEntradas([]); setFuertes([]); setGuarniciones([]); setInstrucciones(""); setPaso(1); }} className="mt-4 px-4 py-2 bg-green-800 text-white text-sm rounded-xl">+ Nuevo menú</button>
+      <p className="text-[#6B6560] mt-1 text-sm">Entrada, fuerte y bebida. Un solo precio.</p>
+      <button onClick={() => { setMostrarForm(true); setEditando(null); setNombre(""); setEntradas([]); setFuertes([]); setGuarniciones([]); setInstrucciones(""); setPaso(1); }} className="mt-4 px-4 py-2 bg-[#C45C26] text-white hover:bg-[#A34B1E] text-sm rounded-xl">+ Nuevo menú</button>
       <div className="mt-6 space-y-3">
         {menus.map((m) => (
-          <div key={m.id} className="bg-white border border-stone-200 rounded-2xl p-5 hover:border-green-200 transition-colors">
+          <div key={m.id} className="bg-white border border-[#E8E4DF] rounded-2xl p-5 hover:border-[#C45C26]/30 transition-colors">
             <div className="flex justify-between items-start gap-4">
               <div className="flex-1">
                 <p className="font-semibold text-lg">{m.nombre}</p>
                 <div className="flex items-center gap-3 mt-2 text-sm">
-                  <span className="text-stone-500">Costo {formatCOP(m.costo_total)}</span>
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${Math.round((m.costo_total / m.precio) * 100) > 32 ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
-                    {Math.round((m.costo_total / m.precio) * 100)}%
+                  <span className="text-base font-bold text-[#1C1B19]">Costo {formatCOP(m.costo_total)}</span>
+                  <span className={`px-2 py-0.5 rounded-full text-sm font-bold ${Math.round((m.costo_total / m.precio) * 100) > 32 ? "bg-red-100 text-red-700" : "bg-[#F6F4F1] text-[#C45C26]"}`}>
+                    Food cost {Math.round((m.costo_total / m.precio) * 100)}%
                   </span>
                 </div>
-                <p className="text-sm text-stone-400 mt-1">Precio {formatCOP(m.precio)}</p>
+                <p className="text-lg font-bold text-[#1C1B19] mt-1">Precio {formatCOP(m.precio)}</p>
               </div>
               <div className="flex flex-col items-end gap-1">
-                <a href={"/dashboard/menus/" + m.id} className="text-sm text-green-800 hover:underline">Ver ficha</a>
-                <button onClick={() => editar(m)} className="text-sm text-stone-500 hover:text-green-800">Editar</button>
-                <button onClick={() => eliminar(m.id)} className="text-sm text-stone-400 hover:text-red-500">Eliminar</button>
+                <a href={"/dashboard/menus/" + m.id} className="text-sm text-[#C45C26] hover:underline">Ver ficha</a>
+                <button onClick={() => editar(m)} className="text-sm font-medium text-[#C45C26]">Editar</button>
+                <button onClick={() => eliminar(m.id)} className="text-sm text-[#6B6560] hover:text-red-500">Eliminar</button>
               </div>
             </div>
           </div>

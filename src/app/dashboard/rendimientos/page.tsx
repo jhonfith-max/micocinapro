@@ -38,18 +38,18 @@ export default function RendimientosPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <p className="text-xs uppercase tracking-widest text-stone-400">Paso 2</p>
+          <p className="text-xs uppercase tracking-widest text-[#6B6560]">Paso 2</p>
           <h1 className="text-2xl sm:text-3xl font-semibold">Lo que se usa</h1>
-          <p className="text-stone-500 text-sm mt-1">Pesa lo que llega y lo que queda.</p>
+          <p className="text-[#6B6560] text-sm mt-1">Pesa lo que llega y lo que queda.</p>
         </div>
-        <button onClick={() => router.push("/dashboard/rendimientos/nueva")} className="px-4 py-2.5 bg-green-800 text-white rounded-xl text-sm">
+        <button onClick={() => router.push("/dashboard/rendimientos/nueva")} className="px-4 py-2.5 bg-[#C45C26] text-white hover:bg-[#A34B1E] rounded-xl text-sm">
           + Nueva prueba
         </button>
       </div>
-      {loading && <p className="text-stone-400">Cargando...</p>}
+      {loading && <p className="text-[#6B6560]">Cargando...</p>}
       {!loading && tests.length === 0 && (
-        <div className="bg-white border border-stone-200 rounded-2xl p-8 text-center">
-          <p className="text-stone-500">Aún no hay pruebas.</p>
+        <div className="bg-white border border-[#E8E4DF] rounded-2xl p-8 text-center">
+          <p className="text-[#6B6560]">Aún no hay pruebas.</p>
         </div>
       )}
       <div className="space-y-3">
@@ -57,14 +57,14 @@ export default function RendimientosPage() {
           <button
             key={t.id}
             onClick={() => router.push(`/dashboard/rendimientos/${t.id}`)}
-            className="w-full bg-white border border-stone-200 rounded-2xl p-5 text-left hover:border-stone-300"
+            className="w-full bg-white border border-[#E8E4DF] rounded-2xl p-5 text-left hover:border-[#E8E4DF]"
           >
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">{t.ingredients?.nombre || "Producto"}{t.notas ? ` · ${t.notas}` : ""}</p>
-                <p className="text-sm text-stone-500 mt-1">De {t.peso_inicial} g quedan {t.peso_final} g en el plato.</p>
+                <p className="text-sm text-[#6B6560] mt-1">De {t.peso_inicial} g quedan {t.peso_final} g en el plato.</p>
               </div>
-              <p className="text-2xl font-semibold">{t.porcentaje_rendimiento}%</p>
+              <p className="text-2xl font-bold text-[#1C1B19]">{t.porcentaje_rendimiento}%</p>
             </div>
           </button>
         ))}
