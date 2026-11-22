@@ -75,7 +75,7 @@ export default function HomePage() {
               onClick={() => router.push("/register")} 
               className="inline-flex items-center justify-center px-8 py-3.5 rounded-lg text-white font-medium bg-[#C45C26] hover:bg-[#A34B1E] shadow-lg shadow-[#C45C26]/20 hover:shadow-[#C45C26]/30 hover:-translate-y-0.5 transition-all"
             >
-              Crear cuenta gratis
+              Solicita tu acceso
             </button>
             
             <button 
