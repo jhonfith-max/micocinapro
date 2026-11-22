@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatCOP } from "@/lib/utils";
+import { LogoMark } from "@/components/LogoMark";
 
 type Recipe = { id: string; nombre: string; precio_venta: number; costo_total: number };
 
@@ -49,13 +50,12 @@ export default function CartaPage() {
       `}</style>
       <div className="text-center mb-8">
         {logo && <img src={logo} alt="" className="w-16 h-16 object-contain mx-auto mb-3 print:w-12 print:h-12" />}
-        <h1 className="text-2xl font-semibold">{nombre || "La carta"}</h1>
+        <h1 className="text-2xl font-semibold flex items-center justify-center gap-2">
+          <LogoMark className="hidden print:inline-block h-5 w-auto" />
+          {nombre || "La carta"}
+        </h1>
         <p className="text-sm text-[#6B6560] mt-1">Tu oferta con costo. Imprime o comparte.</p>
         {direccion && <p className="text-sm text-[#6B6560] mt-1">{direccion}</p>}
-        <p className="hidden print:flex items-center justify-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-[#6B6560] mt-3">
-          <span className="inline-grid h-4 w-4 place-items-center rounded border border-[#E8E4DF] text-[9px] font-semibold text-[#1C1B19]">M</span>
-          MiCocinaPro
-        </p>
       </div>
       <div className="flex justify-center gap-2 mb-8">
         <button onClick={compartir} className="px-4 py-2 text-sm text-[#6B6560] border border-[#E8E4DF] rounded-full">Compartir</button>

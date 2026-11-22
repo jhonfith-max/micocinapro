@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { formatCOP } from "@/lib/utils";
+import { LogoMark } from "@/components/LogoMark";
 
 type Recipe = {
   id: string;
@@ -135,10 +136,7 @@ export default function RecetarioPage() {
 
       <div className="hidden print:flex items-center justify-between mb-6">
         {nombre ? <p className="text-sm font-medium text-[#1C1B19]">{nombre}</p> : <span />}
-        <p className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-[#6B6560]">
-          <span className="inline-grid h-4 w-4 place-items-center rounded border border-[#E8E4DF] text-[9px] font-semibold text-[#1C1B19]">M</span>
-          MiCocinaPro
-        </p>
+        <LogoMark className="h-5 w-auto" />
       </div>
 
       <div className="space-y-8">

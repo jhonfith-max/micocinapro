@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { LogoLockup } from "@/components/LogoMark";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -50,8 +51,9 @@ export default function RegisterPage() {
         
         {/* LOGO */}
         <div className="flex items-center justify-center gap-2 mb-8">
-          <Link href="/" className="w-8 h-8 rounded bg-[#1C1B19] flex items-center justify-center text-white text-sm font-bold shadow-md hover:scale-105 transition-transform">M</Link>
-          <p className="text-sm font-semibold tracking-widest text-[#6B6560] uppercase">MiCocinaPro</p>
+          <Link href="/" className="hover:opacity-80 transition-opacity">
+            <LogoLockup markClassName="h-7 w-auto" wordClassName="text-base" />
+          </Link>
         </div>
 
         {/* TARJETA PRINCIPAL */}

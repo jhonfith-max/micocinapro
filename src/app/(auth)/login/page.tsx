@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { LogoLockup } from "@/components/LogoMark";
 
 const PASOS = [
   { n: "01", titulo: "Compras reales", texto: "Registra la factura del proveedor. El costo real, no el que crees.", rot: "rotate-1", nota: "¡Ojo con el proveedor!" },
@@ -66,8 +67,7 @@ export default function LoginPage() {
       {/* HEADER */}
       <div className="mb-8 lg:mb-12 text-center flex flex-col items-center drop-in" style={{ animationDelay: "0.1s" }}>
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-7 h-7 rounded bg-[#1C1B19] flex items-center justify-center text-white text-sm font-bold shadow-md">M</div>
-          <p className="text-sm font-semibold tracking-widest text-[#6B6560] uppercase">MiCocinaPro</p>
+          <LogoLockup markClassName="h-7 w-auto" wordClassName="text-base" />
         </div>
         <h1 
           className="text-2xl sm:text-4xl lg:text-5xl leading-[1.15] max-w-4xl mx-auto" 

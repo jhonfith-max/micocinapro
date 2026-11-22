@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { formatCOP } from "@/lib/utils";
+import { LogoMark } from "@/components/LogoMark";
 
 type IngredientRow = { id: string; cantidad: number; unidad: string; costo: number; nombre: string };
 type PrepRow = { id: string; cantidad: number; costo: number; nombre: string };
@@ -83,10 +84,7 @@ function LibroInner() {
       <style>{`@media print { .print-brand-foot { display: block !important; position: fixed; bottom: 8mm; left: 0; right: 0; text-align: center; font-size: 10px; color: #6B6560; } }`}</style>
       <div className="hidden print:flex items-center justify-between mb-6">
         {nombre ? <p className="text-sm font-medium text-[#1C1B19]">{nombre}</p> : <span />}
-        <p className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-[#6B6560]">
-          <span className="inline-grid h-4 w-4 place-items-center rounded border border-[#E8E4DF] text-[9px] font-semibold text-[#1C1B19]">M</span>
-          MiCocinaPro
-        </p>
+        <LogoMark className="h-5 w-auto" />
       </div>
       <div className="flex justify-between mb-6 print:hidden">
         <button onClick={() => router.push("/dashboard/recetario")} className="text-sm text-[#6B6560]">Volver al recetario</button>

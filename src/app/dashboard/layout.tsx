@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { LogoLockup } from "@/components/LogoMark";
 
 const LINKS = [
   { href: "/dashboard", nombre: "Inicio", icono: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
@@ -69,7 +70,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <span className="font-bold text-[#1C1B19] tracking-tight">MiCocinaPro</span>
+        <LogoLockup markClassName="h-5 w-auto" wordClassName="text-sm" />
         <div className="w-10" />
       </div>
 
@@ -79,7 +80,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setAbierto(false)} />
           <div className="absolute left-0 top-0 bottom-0 w-72 bg-white flex flex-col shadow-2xl">
             <div className="flex items-center justify-between px-4 py-4 border-b border-[#E8E4DF]">
-              <span className="font-bold text-[#1C1B19]">MiCocinaPro</span>
+              <LogoLockup markClassName="h-5 w-auto" wordClassName="text-sm" />
               <button onClick={() => setAbierto(false)} className="p-2 text-[#6B6560] hover:text-[#1C1B19]">✕</button>
             </div>
             {menu}
@@ -91,8 +92,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* SIDEBAR ESCRITORIO */}
       <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-[#E8E4DF] flex-col z-20">
         <div className="px-6 py-6 flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-[#1C1B19] flex items-center justify-center text-white text-xs font-bold">M</div>
-          <span className="font-bold text-[#1C1B19] tracking-tight">MiCocinaPro</span>
+          <LogoLockup markClassName="h-6 w-auto" wordClassName="text-[15px]" />
         </div>
         {menu}
         <div className="p-4 border-t border-[#E8E4DF]">
