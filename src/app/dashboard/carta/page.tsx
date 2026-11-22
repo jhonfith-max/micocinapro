@@ -43,13 +43,19 @@ export default function CartaPage() {
         @media print {
           aside, nav, header, button { display: none !important; }
           body, html { margin: 0 !important; }
-          main { width: 100% !important; margin: 0 !important; padding: 16px !important; }
+          main { width: 100% !important; margin: 0 !important; padding: 16px 16px 28px !important; }
+          .print-brand-foot { display: block !important; position: fixed; bottom: 8mm; left: 0; right: 0; text-align: center; font-size: 10px; color: #6B6560; }
         }
       `}</style>
       <div className="text-center mb-8">
         {logo && <img src={logo} alt="" className="w-16 h-16 object-contain mx-auto mb-3 print:w-12 print:h-12" />}
         <h1 className="text-2xl font-semibold">{nombre || "La carta"}</h1>
+        <p className="text-sm text-[#6B6560] mt-1">Tu oferta con costo. Imprime o comparte.</p>
         {direccion && <p className="text-sm text-[#6B6560] mt-1">{direccion}</p>}
+        <p className="hidden print:flex items-center justify-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-[#6B6560] mt-3">
+          <span className="inline-grid h-4 w-4 place-items-center rounded border border-[#E8E4DF] text-[9px] font-semibold text-[#1C1B19]">M</span>
+          MiCocinaPro
+        </p>
       </div>
       <div className="flex justify-center gap-2 mb-8">
         <button onClick={compartir} className="px-4 py-2 text-sm text-[#6B6560] border border-[#E8E4DF] rounded-full">Compartir</button>
@@ -69,6 +75,7 @@ export default function CartaPage() {
           </a>
         ))}
       </div>
+      <p className="print-brand-foot hidden">Costeado con MiCocinaPro</p>
     </div>
   );
 }

@@ -37,7 +37,7 @@ export default function RecetasPage() {
         <div>
           <p className="text-xs uppercase tracking-widest text-[#C45C26]">Paso 4</p>
           <h1 className="text-2xl sm:text-3xl font-semibold mt-1">Platos</h1>
-          <p className="text-[#6B6560] mt-1 text-sm">Costea cada plato de la carta.</p>
+          <p className="text-[#6B6560] mt-1 text-sm">Costea el plato completo. El food cost te dice si el precio está bien.</p>
         </div>
         <a href="/dashboard/recetas/nueva" className="px-4 py-2.5 bg-[#C45C26] text-white hover:bg-[#A34B1E] text-sm rounded-xl text-center">+ Nueva</a>
       </div>

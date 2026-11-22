@@ -221,7 +221,7 @@ export default function MenusPage() {
     <div className="max-w-2xl">
       <p className="text-xs uppercase tracking-widest text-[#C45C26]">Si haces almuerzos</p>
       <h1 className="text-2xl sm:text-3xl font-semibold mt-1">Corporativo</h1>
-      <p className="text-[#6B6560] mt-1 text-sm">Entrada, fuerte y bebida. Un solo precio.</p>
+      <p className="text-[#6B6560] mt-1 text-sm">Un menú con varios platos. Un solo precio para el almuerzo.</p>
       <button onClick={() => { setMostrarForm(true); setEditando(null); setNombre(""); setEntradas([]); setFuertes([]); setGuarniciones([]); setInstrucciones(""); setPaso(1); }} className="mt-4 px-4 py-2 bg-[#C45C26] text-white hover:bg-[#A34B1E] text-sm rounded-xl">+ Nuevo menú</button>
       <div className="mt-6 space-y-3">
         {menus.map((m) => (

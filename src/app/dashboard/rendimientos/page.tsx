@@ -40,7 +40,7 @@ export default function RendimientosPage() {
         <div>
           <p className="text-xs uppercase tracking-widest text-[#6B6560]">Paso 2</p>
           <h1 className="text-2xl sm:text-3xl font-semibold">Lo que se usa</h1>
-          <p className="text-[#6B6560] text-sm mt-1">Pesa lo que llega y lo que queda.</p>
+          <p className="text-[#6B6560] text-sm mt-1">Pesa lo que se pierde. El costo real no es el de la compra, es el del plato.</p>
         </div>
         <button onClick={() => router.push("/dashboard/rendimientos/nueva")} className="px-4 py-2.5 bg-[#C45C26] text-white hover:bg-[#A34B1E] rounded-xl text-sm">
           + Nueva prueba

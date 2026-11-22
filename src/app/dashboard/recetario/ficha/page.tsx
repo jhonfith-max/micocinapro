@@ -29,6 +29,7 @@ function FichaInner() {
   const [items, setItems] = useState<IngredientRow[]>([]);
   const [preps, setPreps] = useState<PrepRow[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [nombre, setNombre] = useState("");
 
   useEffect(() => {
     const load = async () => {
@@ -39,6 +40,11 @@ function FichaInner() {
         return;
       }
       setRecipe(data);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase.from("profiles").select("nombre_restaurante").eq("id", user.id).single();
+        if (profile?.nombre_restaurante) setNombre(profile.nombre_restaurante);
+      }
       const { data: rows } = await supabase.from("recipe_ingredients").select("id, cantidad, unidad, costo, ingredients(nombre)").eq("recipe_id", id);
       setItems(rows || []);
       const { data: parts, error: partsError } = await supabase.from("recipe_components").select("*").eq("recipe_id", id);
@@ -67,6 +73,14 @@ function FichaInner() {
 
   return (
     <div className="max-w-3xl bg-white border border-[#E8E4DF] rounded-xl p-8">
+      <style>{`@media print { .print-brand-foot { display: block !important; position: fixed; bottom: 8mm; left: 0; right: 0; text-align: center; font-size: 10px; color: #6B6560; } }`}</style>
+      <div className="hidden print:flex items-center justify-between mb-6">
+        {nombre ? <p className="text-sm font-medium text-[#1C1B19]">{nombre}</p> : <span />}
+        <p className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-[#6B6560]">
+          <span className="inline-grid h-4 w-4 place-items-center rounded border border-[#E8E4DF] text-[9px] font-semibold text-[#1C1B19]">M</span>
+          MiCocinaPro
+        </p>
+      </div>
       <div className="flex justify-between mb-6 print:hidden">
         <button onClick={() => router.push("/dashboard/recetario")} className="text-sm text-[#6B6560]">Volver al recetario</button>
         <button onClick={() => window.print()} className="px-4 py-2 bg-[#C45C26] hover:bg-[#A34B1E] text-white text-sm rounded-xl">Descargar PDF</button>
@@ -108,6 +122,7 @@ function FichaInner() {
       </table>
       {preps.length === 0 && <p className="text-sm text-[#6B6560] mb-3">Este plato no tiene sub-receta guardada.</p>}
       {recipe.instrucciones && <p className="text-sm whitespace-pre-line">{recipe.instrucciones}</p>}
+      <p className="print-brand-foot hidden">Costeado con MiCocinaPro</p>
     </div>
   );
 }

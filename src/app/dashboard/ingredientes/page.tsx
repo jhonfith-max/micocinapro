@@ -84,7 +84,7 @@ export default function IngredientesPage() {
         <div>
           <p className="text-xs uppercase tracking-widest text-[#C45C26]">Paso 1</p>
           <h1 className="text-2xl sm:text-3xl font-semibold mt-1">Lo que compras</h1>
-          <p className="text-[#6B6560] mt-1 text-sm">Cuánto cuesta cada gramo.</p>
+          <p className="text-[#6B6560] mt-1 text-sm">Registra lo que compras. Así sabes cuánto cuesta cada gramo.</p>
         </div>
         <a href="/dashboard/ingredientes/nuevo" className="px-4 py-2.5 bg-[#C45C26] text-white hover:bg-[#A34B1E] text-sm rounded-xl text-center">+ Agregar</a>
       </div>
@@ -105,7 +105,7 @@ export default function IngredientesPage() {
               <div className="flex items-center justify-between sm:justify-end gap-4">
                 <div className="sm:text-right">
                   <p className="text-lg font-bold text-[#1C1B19]">{formatCOP(g.sin)} <span className="font-normal text-[#6B6560] text-sm">cada gramo</span></p>
-                  <p className="text-sm font-semibold text-[#1C1B19]">{g.con ? formatCOP(g.con) + " cada gramo útil" : "Todavía no lo pesaste"}</p>
+                  {rendimientos[ing.id] ? <p className="text-sm font-semibold text-[#1C1B19]">Gramo útil: {formatCOP(g.con || g.sin)}</p> : null}
                 </div>
                 <a href={"/dashboard/ingredientes/" + ing.id + "/editar"} className="text-sm font-medium text-[#C45C26]">Corregir</a>
                 <button onClick={() => eliminar(ing.id)} className="text-sm font-medium text-[#C45C26]">Quitar</button>

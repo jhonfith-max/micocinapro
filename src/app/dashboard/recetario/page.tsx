@@ -26,11 +26,15 @@ export default function RecetarioPage() {
   const [ingredientes, setIngredientes] = useState<Record<string, Ing[]>>({});
   const [subrecetas, setSubrecetas] = useState<Record<string, Sub[]>>({});
   const [vista, setVista] = useState<"cocina" | "costeo">("cocina");
+  const [nombre, setNombre] = useState("");
 
   useEffect(() => {
     const load = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+
+      const { data: profile } = await supabase.from("profiles").select("nombre_restaurante").eq("id", user.id).single();
+      if (profile?.nombre_restaurante) setNombre(profile.nombre_restaurante);
 
       const { data: recipes } = await supabase
         .from("recipes")
@@ -114,18 +118,27 @@ export default function RecetarioPage() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <style>{`@media print { aside, nav, header, button, .no-print { display: none !important; } body, html { margin: 0; padding: 0; background: white; } main { margin: 0; padding: 12mm; width: 100%; } .ficha { page-break-inside: avoid; } }`}</style>
+      <style>{`@media print { aside, nav, header, button, .no-print { display: none !important; } body, html { margin: 0; padding: 0; background: white; } main { margin: 0; padding: 12mm 12mm 18mm; width: 100%; } .ficha { page-break-inside: avoid; } .print-brand-foot { display: block !important; position: fixed; bottom: 8mm; left: 0; right: 0; text-align: center; font-size: 10px; color: #6B6560; } }`}</style>
 
       <div className="no-print flex justify-between items-center mb-6">
         <div>
           <p className="text-xs uppercase tracking-widest text-[#C45C26]">Recetario</p>
           <h1 className="text-2xl font-semibold">Fichas técnicas</h1>
+          <p className="text-sm text-[#6B6560] mt-1">La ficha del plato. Para cocina y para el dueño.</p>
         </div>
         <button onClick={() => window.print()} className="px-4 py-2 border rounded-lg text-sm">Imprimir</button>
       </div>
       <div className="no-print flex gap-2 mb-6">
         <button onClick={() => setVista("cocina")} className={`px-4 py-2 rounded-full text-sm ${vista === "cocina" ? "bg-[#C45C26] text-white hover:bg-[#A34B1E]" : "bg-[#F6F4F1]"}`}>Ficha de cocina</button>
         <button onClick={() => setVista("costeo")} className={`px-4 py-2 rounded-full text-sm ${vista === "costeo" ? "bg-[#C45C26] text-white hover:bg-[#A34B1E]" : "bg-[#F6F4F1]"}`}>Ficha de costeo</button>
+      </div>
+
+      <div className="hidden print:flex items-center justify-between mb-6">
+        {nombre ? <p className="text-sm font-medium text-[#1C1B19]">{nombre}</p> : <span />}
+        <p className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-[#6B6560]">
+          <span className="inline-grid h-4 w-4 place-items-center rounded border border-[#E8E4DF] text-[9px] font-semibold text-[#1C1B19]">M</span>
+          MiCocinaPro
+        </p>
       </div>
 
       <div className="space-y-8">
@@ -226,6 +239,7 @@ export default function RecetarioPage() {
           );
         })}
       </div>
+      <p className="print-brand-foot hidden">Costeado con MiCocinaPro</p>
     </div>
   );
 }

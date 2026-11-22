@@ -26,6 +26,7 @@ function LibroInner() {
   const esDueno = params.get("tipo") === "dueno";
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [nombre, setNombre] = useState("");
 
   useEffect(() => {
     const load = async () => {
@@ -34,6 +35,8 @@ function LibroInner() {
         setError("No hay sesion activa");
         return;
       }
+      const { data: profile } = await supabase.from("profiles").select("nombre_restaurante").eq("id", user.id).single();
+      if (profile?.nombre_restaurante) setNombre(profile.nombre_restaurante);
       const { data, error: fetchError } = await supabase
         .from("recipes")
         .select("id, nombre, porciones, precio_venta, costo_porcion, food_cost, instrucciones, es_preparacion")
@@ -77,6 +80,14 @@ function LibroInner() {
 
   return (
     <div className="max-w-3xl">
+      <style>{`@media print { .print-brand-foot { display: block !important; position: fixed; bottom: 8mm; left: 0; right: 0; text-align: center; font-size: 10px; color: #6B6560; } }`}</style>
+      <div className="hidden print:flex items-center justify-between mb-6">
+        {nombre ? <p className="text-sm font-medium text-[#1C1B19]">{nombre}</p> : <span />}
+        <p className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-[#6B6560]">
+          <span className="inline-grid h-4 w-4 place-items-center rounded border border-[#E8E4DF] text-[9px] font-semibold text-[#1C1B19]">M</span>
+          MiCocinaPro
+        </p>
+      </div>
       <div className="flex justify-between mb-6 print:hidden">
         <button onClick={() => router.push("/dashboard/recetario")} className="text-sm text-[#6B6560]">Volver al recetario</button>
         <button onClick={() => window.print()} className="px-4 py-2 bg-[#C45C26] hover:bg-[#A34B1E] text-white text-sm rounded-xl">Descargar PDF</button>
@@ -123,6 +134,7 @@ function LibroInner() {
           {recipe.instrucciones && <p className="text-sm whitespace-pre-line text-[#1C1B19]">{recipe.instrucciones}</p>}
         </section>
       ))}
+      <p className="print-brand-foot hidden">Costeado con MiCocinaPro</p>
     </div>
   );
 }

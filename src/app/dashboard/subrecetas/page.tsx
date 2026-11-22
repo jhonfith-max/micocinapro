@@ -35,7 +35,7 @@ export default function SubrecetasPage() {
         <div>
           <p className="text-xs uppercase tracking-widest text-[#C45C26]">Paso 3</p>
           <h1 className="text-2xl sm:text-3xl font-semibold mt-1">Salsas y fondos</h1>
-          <p className="text-[#6B6560] mt-1 text-sm">Se arman una vez. Se suman solas en el plato.</p>
+          <p className="text-[#6B6560] mt-1 text-sm">Arma salsas y bases. Su costo se suma solo en el plato.</p>
         </div>
         <a href="/dashboard/subrecetas/nueva" className="px-4 py-2.5 bg-[#C45C26] text-white hover:bg-[#A34B1E] text-sm rounded-xl text-center">+ Nueva</a>
       </div>
